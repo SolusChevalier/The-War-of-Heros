@@ -11,6 +11,8 @@ public class MusicManager : MonoBehaviour
     public AudioClip mainMenuMusic;
     public AudioClip gameSceneMusic;
     private AudioSource audioSource;
+    public AudioClip deathMusic;
+    public AudioClip victoryMusic;
 
     #endregion FIELDS
 
@@ -31,7 +33,7 @@ public class MusicManager : MonoBehaviour
     {
         switch (scene.name)
         {
-            case "Start":
+            case "StartMenu":
                 PlayMusic(mainMenuMusic);
                 break;
 

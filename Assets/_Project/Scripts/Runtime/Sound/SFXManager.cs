@@ -8,8 +8,13 @@ public class SFXManager : MonoBehaviour
     #region FIELDS
 
     public static SFXManager Instance;
+
+    public AudioClip buttonClick;
+    public AudioClip pause;
+    public AudioClip[] UnitDeath;
     public AudioClip[] EnemyDamageSound;
     public AudioClip[] EnemyAttackSound;
+
     private AudioSource audioSource;
 
     #endregion FIELDS
@@ -52,6 +57,12 @@ public class SFXManager : MonoBehaviour
     {
         int rand = Random.Range(0, EnemyAttackSound.Length);
         audioSource.PlayOneShot(EnemyAttackSound[rand]);
+    }
+
+    public void playUnitDeath()
+    {
+        int rand = Random.Range(0, UnitDeath.Length);
+        audioSource.PlayOneShot(UnitDeath[rand]);
     }
 
     #endregion METHODS
