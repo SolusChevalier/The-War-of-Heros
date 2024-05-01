@@ -10,6 +10,7 @@ public class TileProperties
     public bool canHover;
     public bool hover;
     public bool highLow;
+    public bool ocupied;
 
     public void startProps(Vector3 stPos, Vector3 PPpoint)
     {
