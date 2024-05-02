@@ -29,21 +29,22 @@ public class Unit : MonoBehaviour
         }
     }
 
-    public void Move(int2 newPos)
+    public void Move(int2 newPos, out bool complete)
     {
         //Debug.Log("Moving unit, finding tile: ");
         Tile tile = tileManager.GetTile(newPos);
+        if (!tile.selectable | tile.properties.Occupied)
+        {
+            //Debug.Log("Tile is unselectable");
+            complete = false;
+            return;
+        }
         //Debug.Log("Tile found 1");
         Tile currentTile = tileManager.GetTile(unitProperties.Pos);
         //Debug.Log("Current tile found");
         currentTile.properties.Occupied = false;
         currentTile.properties.OccupyingUnit = null;
         //Debug.Log("Tile found 2");
-        if (tile.properties.Occupied)
-        {
-            Debug.Log("Tile is occupied");
-            return;
-        }
         //Debug.Log("Tile is not occupied, setting tile to occupied");
         tile.properties.Occupied = true;
         tile.properties.OccupyingUnit = this;
@@ -51,5 +52,7 @@ public class Unit : MonoBehaviour
         //Debug.Log("Tile set to occupied, moving unit to placement point");
         transform.position = tile.properties.PlacementPoint.position;
         ontile = true;
+        complete = true;
+        return;
     }
 }

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class TeamManager : MonoBehaviour
 {
@@ -26,7 +27,8 @@ public class TeamManager : MonoBehaviour
     private void Awake()
     {
         getTeams();
-        StartCoroutine(UnitLoad(1f));
+        StartCoroutine(UnitLoad(0.5f));
+        //tileManager.resetTiles();
         //LoadUnits();
         //Debug.Log("Instantiated units");
         /*instantiateUnit(new int2(1, 1), "Archer");
@@ -96,63 +98,62 @@ public class TeamManager : MonoBehaviour
         tmpUnit = unit.GetComponent<Unit>();
         unit.GetComponent<Unit>().tileManager = tileManager;
         unit.GetComponent<Unit>().team = unit.GetComponent<Unit>().unitProperties.team = teamNumber;
-        //Debug.Log("got comp");
+
         team.AddUnit(tmpUnit, pos);
-        //Debug.Log("added unit");
-        //tmpUnit.tileManager = tileManager;
-        //tmpUnit.team = teamNumber;
-        //Debug.Log("set tile manager");
-        //StartCoroutine(wait(0.5f));
-        tmpUnit.Move(pos);
-        //Debug.Log("moved unit");
+
+        tileContainer.PosTileDict[pos].selectable = true;
+        bool comp = false;
+        tmpUnit.Move(pos, out comp);
     }
 
     public void StartTurn()
     {
-        //Debug.Log("Starting Turn");
         if (tileManager.selectedTile == null) return;
-        //Debug.Log("Tile Selected");
+
         if (tileManager.selectedTile.properties.Occupied == false) return;
-        //Debug.Log("Selected is occupied");
+
         if (tileManager.selectedTile.properties.OccupyingUnit.team != teamNumber) return;
-        tileManager.PopTilesInRad(tileContainer.KeyByValue(tileManager.selectedTile), tileManager.selectedTile.properties.OccupyingUnit.unitProperties.movementRange, teamNumber);
-        //Debug.Log("Unit Selected is of your team");
 
-        //up to here works
-
-        if (tileManager.TargetTile != null)
+        if (Input.GetButtonDown("Move"))
         {
             prepMove = true;
-            Debug.Log("Unit Selected, prep move");
-            /*if (tileManager.TargetTile != null)
+            foreach (Tile tile in tileContainer.tiles)
             {
-                Debug.Log("Target Tile Selected");
-                if (tileManager.TargetTile.properties.OccupyingUnit.team != teamNumber)
-                {
-                    Debug.Log("Enemy Unit Selected");
-                    MoveUnit();
-                }
-            }*/
-            if (!prepMove)
+                tile.selectable = false;
+            }
+            tileManager.PopTilesInRad(tileContainer.KeyByValue(tileManager.selectedTile), tileManager.selectedTile.properties.OccupyingUnit.unitProperties.movementRange, teamNumber, true);
+        }
+        if (Input.GetButtonDown("Attack"))
+        {
+            prepMove = true;
+            tileManager.PopTilesInRad(tileContainer.KeyByValue(tileManager.selectedTile), tileManager.selectedTile.properties.OccupyingUnit.unitProperties.movementRange, teamNumber, false);
+        }
+        //have selection - pop up tiles
+        if (!prepMove) return;
+
+        if (tileManager.TargetTile != null)//TakeAction - Move or Attack
+        {
+            bool complete = false;
+            tileManager.selectedTile.properties.OccupyingUnit.Move(tileContainer.KeyByValue(tileManager.TargetTile), out complete);
+
+            if (complete)
             {
-                prepMove = true;
-                //tileManager.PopTilesInRad(tileContainer.KeyByValue(tileManager.selectedTile), tileManager.selectedTile.properties.OccupyingUnit.unitProperties.movementRange);
+                tileManager.resetTiles();
+                isTurn = false;
+                prepMove = false;
             }
             else
             {
-                MoveUnit();
                 tileManager.resetTiles();
                 prepMove = false;
-                isTurn = false;
             }
         }
     }
 
     private void MoveUnit()
     {
-        Debug.Log("Moving Unit:");
-        tileManager.selectedTile.properties.OccupyingUnit.Move(tileContainer.KeyByValue(tileManager.TargetTile));
-        Debug.Log("Moved Unit:");
+        bool complete = false;
+        tileManager.selectedTile.properties.OccupyingUnit.Move(tileContainer.KeyByValue(tileManager.TargetTile), out complete);
     }
 
     public void SetUnitLock(bool lockState)
@@ -163,6 +164,34 @@ public class TeamManager : MonoBehaviour
             tmpPosList[i] = team.units[i].unitProperties.Pos;
         }
         tileContainer.SetTileLock(tmpPosList, lockState);
+    }
+
+    public void SetTileSelectable(bool Selectable)
+    {
+        int2[] tmpPosList = new int2[team.units.Count];
+        for (int i = 0; i < team.units.Count; i++)
+        {
+            tmpPosList[i] = team.units[i].unitProperties.Pos;
+        }
+        tileContainer.SetTileSelectable(tmpPosList, Selectable);
+    }
+
+    public void stopTeamHover()
+    {
+        foreach (Tile tile in tileManager.tileContainer.tiles)
+        {
+            tile.StopHover();
+        }
+    }
+
+    public void setTileHover(bool hoverState)
+    {
+        int2[] tmpPosList = new int2[team.units.Count];
+        for (int i = 0; i < team.units.Count; i++)
+        {
+            tmpPosList[i] = team.units[i].unitProperties.Pos;
+        }
+        tileContainer.SetTileHover(tmpPosList, hoverState);
     }
 
     #endregion METHODS

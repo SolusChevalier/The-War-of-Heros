@@ -70,4 +70,28 @@ public class TileContainer : MonoBehaviour
             PosTileDict[tile].properties.canHover = lockState;
         }
     }
+
+    public void ResetTileSelectable()
+    {
+        foreach (Tile tile in tiles)
+        {
+            tile.selectable = false;
+        }
+    }
+
+    public void SetTileSelectable(int2[] tiles, bool SelectableState)
+    {
+        foreach (int2 tile in tiles)
+        {
+            PosTileDict[tile].selectable = SelectableState;
+        }
+    }
+
+    public void SetTileHover(int2[] tiles, bool HoverState)
+    {
+        foreach (int2 tile in tiles)
+        {
+            PosTileDict[tile].properties.hover = HoverState;
+        }
+    }
 }

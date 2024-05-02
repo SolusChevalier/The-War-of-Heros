@@ -50,7 +50,7 @@ public class Tile : MonoBehaviour
         if (!properties.canHover)
             return;
         _HoverTarget = _HoverAnchorLow;
-        selectable = false;
+        //selectable = false;
     }
 
     public void HoverHigh()
@@ -58,7 +58,7 @@ public class Tile : MonoBehaviour
         if (!properties.canHover)
             return;
         _HoverTarget = _HoverAnchorHigh;
-        selectable = true;
+        //selectable = true;
     }
 
     public void StopHover()
@@ -92,6 +92,7 @@ public class Tile : MonoBehaviour
     {
         //_selected = true;
         flipHoverHeight();
+        //selectable = true;
     }
 
     private float TrigMotionEquations(int equation, float progression, float frequency, float amplitude)

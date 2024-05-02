@@ -20,6 +20,11 @@ public class TileManager : MonoBehaviour
         mainCamera = Camera.main;
     }
 
+    private void Awake()
+    {
+        //StartCoroutine(waitReset(1f));
+    }
+
     private void Update()
     {
         ray = mainCamera.ScreenPointToRay(Input.mousePosition);
@@ -40,7 +45,7 @@ public class TileManager : MonoBehaviour
             if (hit.collider.CompareTag("Tile"))
             {
                 Tile tile = hit.collider.GetComponent<Tile>();
-                if (Input.GetButtonDown("Fire1"))
+                if (Input.GetButtonDown("Fire1") & tile.selectable)
                 {
                     if (selectedTile == null)
                     {
@@ -70,7 +75,7 @@ public class TileManager : MonoBehaviour
                         tile.Select();
                     }
                 }
-                if (!tile.properties.hover || tile.selectable)
+                if (!tile.properties.hover || tile.selectable)// || tile.selectable
                 {
                     tile.Hover();
                     //Debug.Log(tileContainer.KeyByValue(tile));
@@ -91,6 +96,12 @@ public class TileManager : MonoBehaviour
         }
         selectedTile = null;
         TargetTile = null;
+        gameManager.SetTileSelectable(gameManager.teamPlayer());
+    }
+
+    public void resetTileSelectable()
+    {
+        tileContainer.ResetTileSelectable();
     }
 
     public Tile GetTile(int2 pos)
@@ -104,7 +115,14 @@ public class TileManager : MonoBehaviour
         return "TileManager";
     }
 
-    public void PopTilesInRad(int2 PiecePos, int rad, int team)
+    public IEnumerator waitReset(float time)
+    {
+        yield return new WaitForSeconds(time);
+        resetTiles();
+        gameManager.SetTileSelectable(1);
+    }
+
+    public void PopTilesInRad(int2 PiecePos, int rad, int team, bool MovAtt)
     {
         int2[] selectableTiles = new int2[(rad * 2 + 1) * (rad * 2 + 1)];
         for (int i = -rad; i <= rad; i++)
@@ -114,10 +132,19 @@ public class TileManager : MonoBehaviour
                 int2 newPos = new int2(PiecePos.x + i, PiecePos.y + j);
                 if (tileContainer.PosTileDict.ContainsKey(newPos))
                 {
-                    if (!tileContainer.PosTileDict[newPos].properties.Occupied | tileContainer.PosTileDict[PiecePos].properties.OccupyingUnit.team != team)
+                    if (MovAtt)
                     {
-                        //tileContainer.PosTileDict[newPos].properties.canHover = true;
-                        tileContainer.PosTileDict[newPos].selectable = true;
+                        if (!tileContainer.PosTileDict[newPos].properties.Occupied)
+                        {
+                            tileContainer.PosTileDict[newPos].selectable = true;
+                        }
+                    }
+                    else
+                    {
+                        if (tileContainer.PosTileDict[PiecePos].properties.OccupyingUnit.team != team)
+                        {
+                            tileContainer.PosTileDict[newPos].selectable = true;
+                        }
                     }
 
                     //tileContainer.PosTileDict[newPos].selectable = true;
