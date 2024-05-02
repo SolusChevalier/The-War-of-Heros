@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.Mathematics;
 using UnityEngine;
 
 public class TileContainer : MonoBehaviour
@@ -8,11 +9,11 @@ public class TileContainer : MonoBehaviour
     // this is where we will generate the map but for now it just stores the tiles in a manually ordered list
     public List<Tile> tiles = new List<Tile>();
 
-    public Dictionary<Vector2, Tile> PosTileDict = new Dictionary<Vector2, Tile>();
+    public Dictionary<int2, Tile> PosTileDict = new Dictionary<int2, Tile>();
 
     private void Start()
     {
-        GameObject[] points = new GameObject[1000];
+        /*GameObject[] points = new GameObject[1000];
         int count = 0;
         for (int i = 0; i <= 1000; i++)
         {
@@ -31,28 +32,42 @@ public class TileContainer : MonoBehaviour
         foreach (GameObject point in points)
         {
             tiles.Add(point.GetComponent<Tile>());
-        }
-        count = 0;
-        for (int Y = 0; Y <= 8; Y++)
+        }*/
+        int count = 0;
+        for (int Y = 0; Y <= 7; Y++)
         {
             for (int X = 0; X <= 15; X++)
             {
-                PosTileDict.Add(new Vector2(X, Y), tiles[count]);
+                PosTileDict.Add(new int2(X, Y), tiles[count]);
+                //Debug.Log($"Tile {X}, {Y} added to dictionary");
                 count++;
             }
         }
         //tiles.AddRange(GetComponentsInChildren<Tile>());
     }
 
-    public Vector2 KeyByValue(Tile value)
+    public int2 KeyByValue(Tile value)
     {
-        foreach (KeyValuePair<Vector2, Tile> entry in PosTileDict)
+        foreach (KeyValuePair<int2, Tile> entry in PosTileDict)
         {
             if (entry.Value == value)
             {
                 return entry.Key;
             }
         }
-        return new Vector2(-1, -1);
+        return new int2(-1, -1);
+    }
+
+    public Tile ValueByKey(int2 key)
+    {
+        return PosTileDict[key];
+    }
+
+    public void SetTileLock(int2[] tiles, bool lockState)
+    {
+        foreach (int2 tile in tiles)
+        {
+            PosTileDict[tile].properties.canHover = lockState;
+        }
     }
 }

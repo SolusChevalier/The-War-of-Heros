@@ -9,13 +9,13 @@ public class Tile : MonoBehaviour
     private readonly Vector3 _speedIncrement = Vector3.one;
     private Vector3 _motionEquation;
     private Vector3 _HoverAnchorLow, _HoverTarget, _HoverAnchorHigh;
-    public bool _selected = false;
+    public bool selectable = false;
 
     private void Start()
     {
         properties = new TileProperties();
-        var Child = transform.GetChild(0);
-        properties.startProps(transform.position, Child.position);
+        Transform placementPoint = transform.GetChild(1).transform;
+        properties.startProps(transform.position, placementPoint);
         _motionEquation = new Vector3(Mathf.Floor(Random.Range(0, 3)), Mathf.Floor(Random.Range(0, 3)), Mathf.Floor(Random.Range(0, 3)));
         _HoverAnchorLow = properties.StartPos + new Vector3(0, 0.1f, 0);
         _HoverAnchorHigh = properties.StartPos + new Vector3(0, 0.2f, 0);
@@ -50,7 +50,7 @@ public class Tile : MonoBehaviour
         if (!properties.canHover)
             return;
         _HoverTarget = _HoverAnchorLow;
-        _selected = false;
+        selectable = false;
     }
 
     public void HoverHigh()
@@ -58,13 +58,14 @@ public class Tile : MonoBehaviour
         if (!properties.canHover)
             return;
         _HoverTarget = _HoverAnchorHigh;
-        _selected = true;
+        selectable = true;
     }
 
     public void StopHover()
     {
         properties.hover = false;
         //HoverLow();
+        selectable = false;
         StopCoroutine(HoverCo());
         transform.position = Vector3.Lerp(transform.position, properties.StartPos, Time.deltaTime * 5f);
         HoverLow();
@@ -75,7 +76,7 @@ public class Tile : MonoBehaviour
         while (properties.hover && properties.canHover)
         {
             transform.position = Vector3.Lerp(transform.position, new Vector3(
-                    _HoverTarget.x, _HoverTarget.y + TrigMotionEquations((int)_motionEquation.y, _progression.y, 0.2f, 0.2f), _HoverTarget.z), Time.deltaTime * 5f);
+                    _HoverTarget.x, _HoverTarget.y + TrigMotionEquations((int)_motionEquation.y, _progression.y, 0.15f, 0.05f), _HoverTarget.z), Time.deltaTime * 5f);
             /*transform.position = Vector3.Lerp(transform.position, new Vector3(
                     HoverTarget.x + TrigMotionEquations((int)_motionEquation.x, _progression.x, 0.2f,
                         0.2f),
@@ -89,7 +90,7 @@ public class Tile : MonoBehaviour
 
     public void Select()
     {
-        _selected = true;
+        //_selected = true;
         flipHoverHeight();
     }
 

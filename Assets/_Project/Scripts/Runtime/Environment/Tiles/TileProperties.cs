@@ -1,24 +1,29 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[Serializable]
 public class TileProperties
 {
     public Vector3 StartPos;
-    public Vector3 PlacementPoint;
+    public Transform PlacementPoint;
     public bool _selected;
     public bool canHover;
     public bool hover;
     public bool highLow;
-    public bool ocupied;
+    public bool Occupied;
+    public Unit OccupyingUnit;
 
-    public void startProps(Vector3 stPos, Vector3 PPpoint)
+    public void startProps(Vector3 stPos, Transform ppPoint)
     {
         StartPos = stPos;
-        PlacementPoint = PPpoint;
         _selected = false;
         canHover = true;
         hover = false;
         highLow = false;
+        Occupied = false;
+        OccupyingUnit = null;
+        PlacementPoint = ppPoint;
     }
 }
