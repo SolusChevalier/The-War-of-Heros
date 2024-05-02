@@ -13,9 +13,13 @@ public class TeamManager : MonoBehaviour
     public TileContainer tileContainer;
     public UnitContainer team;
     public GameManager gameManager;
+    public GameObject inputCanvas;
+    public bool fail = false;
     public int teamNumber;
+    public int UnitCount = 1;
     public bool isTurn = false;
     public bool prepMove = false;
+    public bool prepAttack = false;
     public GameObject ArcherPrefabs, CavPrefab, SpearPrefab, SwordPrefab;
     public int2[] unitPositions;
     public UnitTypes[] unitTypes;
@@ -23,6 +27,11 @@ public class TeamManager : MonoBehaviour
     #endregion FIELDS
 
     #region UNITY METHODS
+
+    private void Start()
+    {
+        UnitCount = 14;
+    }
 
     private void Awake()
     {
@@ -39,6 +48,10 @@ public class TeamManager : MonoBehaviour
 
     private void Update()
     {
+        if (UnitCount <= 0)
+        {
+            fail = true;
+        }
         if (!isTurn) return;
         StartTurn();
     }
@@ -57,6 +70,7 @@ public class TeamManager : MonoBehaviour
     {
         yield return new WaitForSeconds(time);
         LoadUnits();
+        //UnitCount = team.units.Count;
     }
 
     public IEnumerator wait(float time)
@@ -97,6 +111,7 @@ public class TeamManager : MonoBehaviour
         }
         tmpUnit = unit.GetComponent<Unit>();
         unit.GetComponent<Unit>().tileManager = tileManager;
+        unit.GetComponent<Unit>().teamManager = this;
         unit.GetComponent<Unit>().team = unit.GetComponent<Unit>().unitProperties.team = teamNumber;
 
         team.AddUnit(tmpUnit, pos);
@@ -113,39 +128,85 @@ public class TeamManager : MonoBehaviour
         if (tileManager.selectedTile.properties.Occupied == false) return;
 
         if (tileManager.selectedTile.properties.OccupyingUnit.team != teamNumber) return;
-
+        inputCanvas.SetActive(true);
         if (Input.GetButtonDown("Move"))
         {
-            prepMove = true;
-            foreach (Tile tile in tileContainer.tiles)
-            {
-                tile.selectable = false;
-            }
-            tileManager.PopTilesInRad(tileContainer.KeyByValue(tileManager.selectedTile), tileManager.selectedTile.properties.OccupyingUnit.unitProperties.movementRange, teamNumber, true);
+            movement();
         }
         if (Input.GetButtonDown("Attack"))
         {
-            prepMove = true;
-            tileManager.PopTilesInRad(tileContainer.KeyByValue(tileManager.selectedTile), tileManager.selectedTile.properties.OccupyingUnit.unitProperties.movementRange, teamNumber, false);
+            attack();
         }
         //have selection - pop up tiles
-        if (!prepMove) return;
+        //if (!prepMove) return;
 
-        if (tileManager.TargetTile != null)//TakeAction - Move or Attack
+        if (tileManager.TargetTile != null & prepAttack)//TakeAction - Attack
         {
+            Debug.Log("Attacking");
+            int damage;
             bool complete = false;
-            tileManager.selectedTile.properties.OccupyingUnit.Move(tileContainer.KeyByValue(tileManager.TargetTile), out complete);
+            try
+            {
+                damage = tileManager.selectedTile.properties.OccupyingUnit.unitProperties.attack - tileManager.TargetTile.properties.OccupyingUnit.unitProperties.defense;
+                complete = false;
+                Debug.Log("Damage: " + damage);
+                tileManager.TargetTile.properties.OccupyingUnit.TakeDamage(damage, out complete);
+                Debug.Log("Damage taken");
+            }
+            catch (NullReferenceException)
+            {
+                tileManager.resetTiles();
+                prepMove = false;
+                prepAttack = false;
+                Debug.Log("Null reference");
+                return;
+            }
 
             if (complete)
             {
                 tileManager.resetTiles();
                 isTurn = false;
                 prepMove = false;
+                prepAttack = false;
+                inputCanvas.SetActive(false);
+                //Debug.Log("Complete");
             }
             else
             {
                 tileManager.resetTiles();
                 prepMove = false;
+                prepAttack = false;
+                //Debug.Log("Not complete");
+            }
+        }
+        if (tileManager.TargetTile != null & prepMove)//TakeAction - Move
+        {
+            bool complete = false;
+            try
+            {
+                tileManager.selectedTile.properties.OccupyingUnit.Move(tileContainer.KeyByValue(tileManager.TargetTile), out complete);
+            }
+            catch (NullReferenceException)
+            {
+                tileManager.resetTiles();
+                prepMove = false;
+                prepAttack = false;
+                return;
+            }
+
+            if (complete)
+            {
+                tileManager.resetTiles();
+                isTurn = false;
+                prepMove = false;
+                inputCanvas.SetActive(false);
+                prepAttack = false;
+            }
+            else
+            {
+                tileManager.resetTiles();
+                prepMove = false;
+                prepAttack = false;
             }
         }
     }
@@ -154,6 +215,29 @@ public class TeamManager : MonoBehaviour
     {
         bool complete = false;
         tileManager.selectedTile.properties.OccupyingUnit.Move(tileContainer.KeyByValue(tileManager.TargetTile), out complete);
+    }
+
+    public void movement()
+    {
+        prepMove = true;
+        prepAttack = false;
+        foreach (Tile tile in tileContainer.tiles)
+        {
+            tile.selectable = false;
+        }
+        tileManager.PopTilesInRad(tileContainer.KeyByValue(tileManager.selectedTile), tileManager.selectedTile.properties.OccupyingUnit.unitProperties.movementRange, teamNumber, true);
+    }
+
+    public void attack()
+    {
+        prepMove = false;
+        prepAttack = true;
+        foreach (Tile tile in tileContainer.tiles)
+        {
+            tile.selectable = false;
+            tile.properties.canHover = true;
+        }
+        tileManager.PopTilesInRad(tileContainer.KeyByValue(tileManager.selectedTile), tileManager.selectedTile.properties.OccupyingUnit.unitProperties.attackRange, teamNumber, false);
     }
 
     public void SetUnitLock(bool lockState)
@@ -192,6 +276,16 @@ public class TeamManager : MonoBehaviour
             tmpPosList[i] = team.units[i].unitProperties.Pos;
         }
         tileContainer.SetTileHover(tmpPosList, hoverState);
+    }
+
+    public void setCanHover(bool hover)
+    {
+        int2[] tmpPosList = new int2[team.units.Count];
+        for (int i = 0; i < team.units.Count; i++)
+        {
+            tmpPosList[i] = team.units[i].unitProperties.Pos;
+        }
+        tileContainer.setCanHover(tmpPosList, hover);
     }
 
     #endregion METHODS

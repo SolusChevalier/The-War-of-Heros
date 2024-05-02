@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Mathematics;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -17,12 +18,14 @@ public class UnitProperties : MonoBehaviour
     public int movementRange;
     public int team;
     public int2 Pos;
+    public UnityEvent OnDied;
+    public UnityEvent<int> OnUnitHealthChanged;
 
     #endregion FIELDS
 
     #region UNITY METHODS
 
-    private void Start()
+    private void Awake()
     {
         onStart();
     }
@@ -34,13 +37,14 @@ public class UnitProperties : MonoBehaviour
     public void onStart()
     {
         health = maxHealth;
+        OnUnitHealthChanged?.Invoke(health);
     }
 
     public void TakeDamage(int damage)
     {
         health -= damage;
         health = Mathf.Clamp(health, 0, maxHealth);  // Ensure health stays within bounds
-
+        OnUnitHealthChanged?.Invoke(health);
         if (health <= 0)
         {
             health = 0;
@@ -50,6 +54,7 @@ public class UnitProperties : MonoBehaviour
 
     private void Die()
     {
+        OnDied?.Invoke();
     }
 
     #endregion METHODS

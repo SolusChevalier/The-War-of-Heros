@@ -17,8 +17,8 @@ public class Tile : MonoBehaviour
         Transform placementPoint = transform.GetChild(1).transform;
         properties.startProps(transform.position, placementPoint);
         _motionEquation = new Vector3(Mathf.Floor(Random.Range(0, 3)), Mathf.Floor(Random.Range(0, 3)), Mathf.Floor(Random.Range(0, 3)));
-        _HoverAnchorLow = properties.StartPos + new Vector3(0, 0.1f, 0);
-        _HoverAnchorHigh = properties.StartPos + new Vector3(0, 0.2f, 0);
+        _HoverAnchorLow = properties.StartPos + new Vector3(0, 0.2f, 0);
+        _HoverAnchorHigh = properties.StartPos + new Vector3(0, 0.4f, 0);
         _HoverTarget = _HoverAnchorLow;
     }
 

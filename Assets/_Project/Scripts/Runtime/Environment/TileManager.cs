@@ -115,13 +115,6 @@ public class TileManager : MonoBehaviour
         return "TileManager";
     }
 
-    public IEnumerator waitReset(float time)
-    {
-        yield return new WaitForSeconds(time);
-        resetTiles();
-        gameManager.SetTileSelectable(1);
-    }
-
     public void PopTilesInRad(int2 PiecePos, int rad, int team, bool MovAtt)
     {
         int2[] selectableTiles = new int2[(rad * 2 + 1) * (rad * 2 + 1)];
@@ -141,9 +134,13 @@ public class TileManager : MonoBehaviour
                     }
                     else
                     {
-                        if (tileContainer.PosTileDict[PiecePos].properties.OccupyingUnit.team != team)
+                        if (tileContainer.PosTileDict[newPos].properties.Occupied) // & tileContainer.PosTileDict[newPos].properties.OccupyingUnit.team != team
                         {
-                            tileContainer.PosTileDict[newPos].selectable = true;
+                            if (tileContainer.PosTileDict[newPos].properties.OccupyingUnit.team != team)
+                            {
+                                tileContainer.PosTileDict[newPos].selectable = true;
+                                tileContainer.PosTileDict[newPos].properties.canHover = true;
+                            }
                         }
                     }
 

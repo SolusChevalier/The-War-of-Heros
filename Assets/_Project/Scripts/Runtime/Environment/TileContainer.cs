@@ -94,4 +94,12 @@ public class TileContainer : MonoBehaviour
             PosTileDict[tile].properties.hover = HoverState;
         }
     }
+
+    public void setCanHover(int2[] tiles, bool hov)
+    {
+        foreach (int2 tile in tiles)
+        {
+            PosTileDict[tile].properties.canHover = hov;
+        }
+    }
 }

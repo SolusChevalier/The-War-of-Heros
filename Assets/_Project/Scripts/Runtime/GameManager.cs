@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -9,6 +10,8 @@ public class GameManager : MonoBehaviour
 
     //private bool isTurn = true;
     public TeamManager Team1, Team2;
+
+    public string Win1, Win2;
 
     public UnitContainer unitContainer1, unitContainer2;
     public TileManager tileManager;
@@ -26,6 +29,18 @@ public class GameManager : MonoBehaviour
 
     public void Update()
     {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            SceneManager.LoadScene("MainMenu");
+        }
+        if (Team1.fail)
+        {
+            SceneManager.LoadScene(Win1);
+        }
+        else if (Team2.fail)
+        {
+            SceneManager.LoadScene(Win2);
+        }
         if (TeamTurn == 1 && !Team2.isTurn)
         {
             //Debug.Log("Team 1's turn");
@@ -72,12 +87,16 @@ public class GameManager : MonoBehaviour
             Team2.setTileHover(false);
             Team2.stopTeamHover();
             Team1.SetTileSelectable(true);
+            Team1.setCanHover(true);
+            Team2.setTileHover(true);
         }
         else if (team == 2)
         {
             Team1.setTileHover(false);
             Team1.stopTeamHover();
             Team2.SetTileSelectable(true);
+            Team2.setCanHover(true);
+            Team1.setTileHover(true);
         }
     }
 }

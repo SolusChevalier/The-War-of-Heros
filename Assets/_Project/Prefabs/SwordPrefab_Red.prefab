@@ -48,6 +48,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   unitProperties: {fileID: 6048132174960590539}
   tileManager: {fileID: 0}
+  teamManager: {fileID: 0}
   team: 0
 --- !u!114 &6048132174960590539
 MonoBehaviour:
@@ -64,14 +65,20 @@ MonoBehaviour:
   unitType: 3
   health: 0
   maxHealth: 100
-  attack: 0
-  defense: 0
-  attackRange: 0
+  attack: 50
+  defense: 10
+  attackRange: 1
   movementRange: 2
   team: 0
   Pos:
     x: 0
     y: 0
+  OnDied:
+    m_PersistentCalls:
+      m_Calls: []
+  OnUnitHealthChanged:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1001 &5582768827078353120
 PrefabInstance:
   m_ObjectHideFlags: 0

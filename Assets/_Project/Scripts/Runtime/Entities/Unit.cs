@@ -2,19 +2,22 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class Unit : MonoBehaviour
 {
     public UnitProperties unitProperties;
     public TileManager tileManager;
+    public TeamManager teamManager;
     public int team;
     private bool ontile = false;
 
     private void Awake()
     {
         //unitProperties = GetComponent<UnitProperties>();
-
-        //GameObject environment = GameObject.FindGameObjectsWithTag("Terrain")[0];
+        unitProperties.OnDied.AddListener(HandleUnitDeath);
+        /*GameObject team = GameObject.FindGameObjectsWithTag($"TeamManager{team}")[0];
+        teamManager = team.GetComponent<TeamManager>();*/
         //tileManager = environment.GetComponent<TileManager>();
         //unitProperties.team = team;
         //tileManager = FindObjectOfType<TileManager>();
@@ -27,6 +30,21 @@ public class Unit : MonoBehaviour
             Tile tile = tileManager.GetTile(unitProperties.Pos);
             transform.position = tile.properties.PlacementPoint.position;
         }
+    }
+
+    private void HandleUnitDeath()
+    {
+        tileManager.GetTile(unitProperties.Pos).properties.Occupied = false;
+        tileManager.GetTile(unitProperties.Pos).properties.OccupyingUnit = null;
+        teamManager.team.units.Remove(this);
+        teamManager.UnitCount--;
+        Destroy(gameObject);
+    }
+
+    public void TakeDamage(int dam, out bool complete)
+    {
+        complete = true;
+        unitProperties.TakeDamage(dam);
     }
 
     public void Move(int2 newPos, out bool complete)
