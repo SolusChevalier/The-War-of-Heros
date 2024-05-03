@@ -12,10 +12,10 @@ EditorBuildSettings:
     path: Assets/Scenes/MainMenu.unity
     guid: 5ff362e6e0f89c94c9cce1e9450f203b
   - enabled: 1
-    path: Assets/Scenes/Red1Blue2.unity
+    path: Assets/Scenes/Game Scenes/Red1Blue2.unity
     guid: d6b38d15731013f489407bb57b29b0ab
   - enabled: 1
-    path: Assets/Scenes/Red2Blue1.unity
+    path: Assets/Scenes/Game Scenes/Red2Blue1.unity
     guid: 1dcd732aac4e1434f8d32a09c611d871
   - enabled: 1
     path: Assets/Scenes/BlueWin.unity

@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.UI;
@@ -11,7 +12,7 @@ public class TeamManager : MonoBehaviour
 
     public TileManager tileManager;
     public TileContainer tileContainer;
-    public UnitContainer team;
+    public UnitContainer teamContainer;
     public GameManager gameManager;
     public GameObject inputCanvas;
     public bool fail = false;
@@ -35,22 +36,15 @@ public class TeamManager : MonoBehaviour
 
     private void Awake()
     {
-        getTeams();
+        teamContainer.team = teamNumber;
         StartCoroutine(UnitLoad(0.5f));
-        //tileManager.resetTiles();
-        //LoadUnits();
-        //Debug.Log("Instantiated units");
-        /*instantiateUnit(new int2(1, 1), "Archer");
-        instantiateUnit(new int2(2, 1), "Cavalry");
-        instantiateUnit(new int2(3, 1), "Spearman");
-        instantiateUnit(new int2(4, 1), "Swordsman");*/
     }
 
     private void Update()
     {
         if (UnitCount <= 0)
         {
-            fail = true;
+            EventManager.PlayerWin?.Invoke(teamNumber);
         }
         if (!isTurn) return;
         StartTurn();
@@ -59,12 +53,6 @@ public class TeamManager : MonoBehaviour
     #endregion UNITY METHODS
 
     #region METHODS
-
-    public void getTeams()
-    {
-        team = GetComponent<UnitContainer>();
-        team.team = teamNumber;
-    }
 
     public IEnumerator UnitLoad(float time)
     {
@@ -110,11 +98,15 @@ public class TeamManager : MonoBehaviour
                 break;
         }
         tmpUnit = unit.GetComponent<Unit>();
-        unit.GetComponent<Unit>().tileManager = tileManager;
-        unit.GetComponent<Unit>().teamManager = this;
-        unit.GetComponent<Unit>().team = unit.GetComponent<Unit>().unitProperties.team = teamNumber;
+        /*        unit.GetComponent<Unit>().tileManager = tileManager;
+                unit.GetComponent<Unit>().teamManager = this;
+                unit.GetComponent<Unit>().team = unit.GetComponent<Unit>().unitProperties.team = teamNumber;
+                unit.GetComponent<Unit>().team = unit.GetComponent<Unit>().team = teamNumber;*/
+        tmpUnit.tileManager = tileManager;
+        tmpUnit.teamManager = this;
+        tmpUnit.team = tmpUnit.unitProperties.team = teamNumber;
 
-        team.AddUnit(tmpUnit, pos);
+        teamContainer.AddUnit(tmpUnit, pos);
 
         tileContainer.PosTileDict[pos].selectable = true;
         bool comp = false;
@@ -129,29 +121,24 @@ public class TeamManager : MonoBehaviour
 
         if (tileManager.selectedTile.properties.OccupyingUnit.team != teamNumber) return;
         inputCanvas.SetActive(true);
-        if (Input.GetButtonDown("Move"))
+        if (Input.GetKeyDown(KeyCode.Keypad1))
         {
             movement();
         }
-        if (Input.GetButtonDown("Attack"))
+        if (Input.GetKeyDown(KeyCode.Keypad2))
         {
             attack();
         }
-        //have selection - pop up tiles
-        //if (!prepMove) return;
-
+        if (tileManager.TargetTile == null) return;
         if (tileManager.TargetTile != null & prepAttack)//TakeAction - Attack
         {
-            Debug.Log("Attacking");
             int damage;
             bool complete = false;
             try
             {
                 damage = tileManager.selectedTile.properties.OccupyingUnit.unitProperties.attack - tileManager.TargetTile.properties.OccupyingUnit.unitProperties.defense;
                 complete = false;
-                Debug.Log("Damage: " + damage);
                 tileManager.TargetTile.properties.OccupyingUnit.TakeDamage(damage, out complete);
-                Debug.Log("Damage taken");
             }
             catch (NullReferenceException)
             {
@@ -169,14 +156,12 @@ public class TeamManager : MonoBehaviour
                 prepMove = false;
                 prepAttack = false;
                 inputCanvas.SetActive(false);
-                //Debug.Log("Complete");
             }
             else
             {
                 tileManager.resetTiles();
                 prepMove = false;
                 prepAttack = false;
-                //Debug.Log("Not complete");
             }
         }
         if (tileManager.TargetTile != null & prepMove)//TakeAction - Move
@@ -242,20 +227,20 @@ public class TeamManager : MonoBehaviour
 
     public void SetUnitLock(bool lockState)
     {
-        int2[] tmpPosList = new int2[team.units.Count];
-        for (int i = 0; i < team.units.Count; i++)
+        int2[] tmpPosList = new int2[teamContainer.units.Count];
+        for (int i = 0; i < teamContainer.units.Count; i++)
         {
-            tmpPosList[i] = team.units[i].unitProperties.Pos;
+            tmpPosList[i] = teamContainer.units[i].unitProperties.Pos;
         }
         tileContainer.SetTileLock(tmpPosList, lockState);
     }
 
     public void SetTileSelectable(bool Selectable)
     {
-        int2[] tmpPosList = new int2[team.units.Count];
-        for (int i = 0; i < team.units.Count; i++)
+        int2[] tmpPosList = new int2[teamContainer.units.Count];
+        for (int i = 0; i < teamContainer.units.Count; i++)
         {
-            tmpPosList[i] = team.units[i].unitProperties.Pos;
+            tmpPosList[i] = teamContainer.units[i].unitProperties.Pos;
         }
         tileContainer.SetTileSelectable(tmpPosList, Selectable);
     }
@@ -270,20 +255,20 @@ public class TeamManager : MonoBehaviour
 
     public void setTileHover(bool hoverState)
     {
-        int2[] tmpPosList = new int2[team.units.Count];
-        for (int i = 0; i < team.units.Count; i++)
+        int2[] tmpPosList = new int2[teamContainer.units.Count];
+        for (int i = 0; i < teamContainer.units.Count; i++)
         {
-            tmpPosList[i] = team.units[i].unitProperties.Pos;
+            tmpPosList[i] = teamContainer.units[i].unitProperties.Pos;
         }
         tileContainer.SetTileHover(tmpPosList, hoverState);
     }
 
     public void setCanHover(bool hover)
     {
-        int2[] tmpPosList = new int2[team.units.Count];
-        for (int i = 0; i < team.units.Count; i++)
+        int2[] tmpPosList = new int2[teamContainer.units.Count];
+        for (int i = 0; i < teamContainer.units.Count; i++)
         {
-            tmpPosList[i] = team.units[i].unitProperties.Pos;
+            tmpPosList[i] = teamContainer.units[i].unitProperties.Pos;
         }
         tileContainer.setCanHover(tmpPosList, hover);
     }

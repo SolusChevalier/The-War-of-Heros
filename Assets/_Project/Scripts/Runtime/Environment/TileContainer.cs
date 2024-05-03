@@ -1,6 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.Burst;
+using Unity.Collections;
+using Unity.Jobs;
 using Unity.Mathematics;
 using UnityEngine;
 
@@ -13,37 +16,24 @@ public class TileContainer : MonoBehaviour
 
     private void Start()
     {
-        /*GameObject[] points = new GameObject[1000];
-        int count = 0;
-        for (int i = 0; i <= 1000; i++)
-        {
-            GameObject point = GameObject.Find($"Tile ({i})");
-            if (point)
-            {
-                points[count] = point;
-                count++;
-            }
-            else
-            {
-                break;
-            }
-        }
-        System.Array.Resize(ref points, count);
-        foreach (GameObject point in points)
-        {
-            tiles.Add(point.GetComponent<Tile>());
-        }*/
         int count = 0;
         for (int Y = 0; Y <= 7; Y++)
         {
             for (int X = 0; X <= 15; X++)
             {
                 PosTileDict.Add(new int2(X, Y), tiles[count]);
-                //Debug.Log($"Tile {X}, {Y} added to dictionary");
                 count++;
             }
         }
-        //tiles.AddRange(GetComponentsInChildren<Tile>());
+        /*
+        Tile[] tilesArray = tiles.ToArray();
+        var job = new DictLoad
+        {
+            Input = tilesArray,
+            Output = PosTileDict
+        };
+        job.Schedule().Complete();
+        */
     }
 
     public int2 KeyByValue(Tile value)
@@ -102,4 +92,27 @@ public class TileContainer : MonoBehaviour
             PosTileDict[tile].properties.canHover = hov;
         }
     }
+
+    /*[BurstCompile(CompileSynchronously = true)]
+    private struct DictLoad : IJob
+    {
+        [ReadOnly]
+        public Tile[] Input;
+
+        [WriteOnly]
+        public Dictionary<int2, Tile> Output;
+
+        public void Execute()
+        {
+            int count = 0;
+            for (int Y = 0; Y <= 7; Y++)
+            {
+                for (int X = 0; X <= 15; X++)
+                {
+                    Output.Add(new int2(X, Y), Input[count]);
+                    count++;
+                }
+            }
+        }
+    }*/
 }

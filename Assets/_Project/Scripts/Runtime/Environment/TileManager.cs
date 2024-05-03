@@ -22,7 +22,7 @@ public class TileManager : MonoBehaviour
 
     private void Awake()
     {
-        //StartCoroutine(waitReset(1f));
+        StartCoroutine(WaitReset(0.75f));
     }
 
     private void Update()
@@ -38,7 +38,6 @@ public class TileManager : MonoBehaviour
             {
                 tile.Hover();
             }
-            //tile.StopHover();
         }
         if (Physics.Raycast(ray, out hit))
         {
@@ -78,7 +77,6 @@ public class TileManager : MonoBehaviour
                 if (!tile.properties.hover || tile.selectable)// || tile.selectable
                 {
                     tile.Hover();
-                    //Debug.Log(tileContainer.KeyByValue(tile));
                 }
             }
         }
@@ -99,20 +97,9 @@ public class TileManager : MonoBehaviour
         gameManager.SetTileSelectable(gameManager.teamPlayer());
     }
 
-    public void resetTileSelectable()
-    {
-        tileContainer.ResetTileSelectable();
-    }
-
     public Tile GetTile(int2 pos)
     {
-        //Debug.Log("Getting tile: " + tileContainer.PosTileDict[pos]);
         return tileContainer.PosTileDict[pos];
-    }
-
-    public override string ToString()
-    {
-        return "TileManager";
     }
 
     public void PopTilesInRad(int2 PiecePos, int rad, int team, bool MovAtt)
@@ -149,5 +136,11 @@ public class TileManager : MonoBehaviour
                 }
             }
         }
+    }
+
+    public IEnumerator WaitReset(float time)
+    {
+        yield return new WaitForSeconds(time);
+        resetTiles();
     }
 }

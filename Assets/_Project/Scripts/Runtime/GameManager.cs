@@ -15,6 +15,19 @@ public class GameManager : MonoBehaviour
 
     public UnitContainer unitContainer1, unitContainer2;
     public TileManager tileManager;
+    public TileContainer tileContainer;
+
+    private void Start()
+    {
+        EventManager.PlayerTurn += PlayerTurn;
+        EventManager.PlayerWin += PlayerWin;
+    }
+
+    private void OnDestroy()
+    {
+        EventManager.PlayerTurn -= PlayerTurn;
+        EventManager.PlayerWin -= PlayerWin;
+    }
 
     private void Awake()
     {
@@ -24,46 +37,19 @@ public class GameManager : MonoBehaviour
         Team1.SetUnitLock(true);
         Team1.SetTileSelectable(true);
         Team2.SetUnitLock(false);
+
         //Team1.SetTileSelectable(false);
     }
 
     public void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            SceneManager.LoadScene("MainMenu");
-        }
-        if (Team1.fail)
-        {
-            SceneManager.LoadScene(Win1);
-        }
-        else if (Team2.fail)
-        {
-            SceneManager.LoadScene(Win2);
-        }
         if (TeamTurn == 1 && !Team2.isTurn)
         {
-            //Debug.Log("Team 1's turn");
-            Team1.isTurn = true;
-            Team2.isTurn = false;
-            TeamTurn = 2;
-            tileManager.resetTileSelectable();
-            Team1.SetUnitLock(true);
-            Team1.SetTileSelectable(true);
-            Team2.SetUnitLock(false);
-            Team2.SetTileSelectable(false);
+            Player1Turn();
         }
         else if (TeamTurn == 2 && !Team1.isTurn)
         {
-            //Debug.Log("Team 2's turn");
-            Team1.isTurn = false;
-            Team2.isTurn = true;
-            TeamTurn = 1;
-            tileManager.resetTileSelectable();
-            Team1.SetUnitLock(false);
-            Team1.SetTileSelectable(false);
-            Team2.SetUnitLock(true);
-            Team2.SetTileSelectable(true);
+            Player2Turn();
         }
     }
 
@@ -98,5 +84,63 @@ public class GameManager : MonoBehaviour
             Team2.setCanHover(true);
             Team1.setTileHover(true);
         }
+    }
+
+    public void PlayerTurn(int team)
+    {
+        if (team == 1)
+        {
+            Player1Turn();
+        }
+        else if (team == 2)
+        {
+            Player2Turn();
+        }
+    }
+
+    public void PlayerWin(int team)
+    {
+        if (team == 1)
+        {
+            Player1Win();
+        }
+        if (team == 2)
+        {
+            Player2Win();
+        }
+    }
+
+    private void Player1Turn()
+    {
+        Team1.isTurn = true;
+        Team2.isTurn = false;
+        TeamTurn = 2;
+        tileContainer.ResetTileSelectable();
+        Team1.SetUnitLock(true);
+        Team1.SetTileSelectable(true);
+        Team2.SetUnitLock(false);
+        Team2.SetTileSelectable(false);
+    }
+
+    private void Player2Turn()
+    {
+        Team1.isTurn = false;
+        Team2.isTurn = true;
+        TeamTurn = 1;
+        tileContainer.ResetTileSelectable();
+        Team1.SetUnitLock(false);
+        Team1.SetTileSelectable(false);
+        Team2.SetUnitLock(true);
+        Team2.SetTileSelectable(true);
+    }
+
+    public void Player1Win()
+    {
+        SceneManager.LoadScene(Win1);
+    }
+
+    public void Player2Win()
+    {
+        SceneManager.LoadScene(Win2);
     }
 }
