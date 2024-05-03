@@ -630,7 +630,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1165807470}
+  - {fileID: 1438095776}
   - {fileID: 1058352769}
   - {fileID: 793274056}
   - {fileID: 1090114740}
@@ -718,7 +718,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1165807472}
+      - m_Target: {fileID: 1438095777}
         m_TargetAssemblyTypeName: TeamManager, Assembly-CSharp
         m_MethodName: movement
         m_Mode: 1
@@ -928,11 +928,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   TeamTurn: 1
-  Team1: {fileID: 1165807472}
+  Team1: {fileID: 1438095777}
   Team2: {fileID: 1058352771}
   Win1: RedWin
   Win2: BlueWin
-  unitContainer1: {fileID: 1165807471}
+  unitContainer1: {fileID: 1438095775}
   unitContainer2: {fileID: 1058352770}
   tileManager: {fileID: 1880256886}
   tileContainer: {fileID: 1880256885}
@@ -1546,10 +1546,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   redCan: {fileID: 1757450947}
   blueCan: {fileID: 1283346211}
-  RedTeam: {fileID: 1165807472}
+  RedTeam: {fileID: 1438095777}
   BlueTeam: {fileID: 1058352771}
   RedTeamText: {fileID: 1074488979}
   BlueTeamText: {fileID: 416923697}
+  redScore: 0
+  blueScore: 0
 --- !u!114 &1090114742
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1774,114 +1776,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1165807469
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1165807470}
-  - component: {fileID: 1165807472}
-  - component: {fileID: 1165807471}
-  m_Layer: 0
-  m_Name: Team 1
-  m_TagString: TeamManager1
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1165807470
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1165807469}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 11.008881, y: -39.708393, z: -19.184143}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 571922595}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1165807471
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1165807469}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3300b7736c888244184116a3ef41dd69, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  team: 0
-  units: []
---- !u!114 &1165807472
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1165807469}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7a3f67160faca044c9d19db6cb62a332, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  tileManager: {fileID: 1880256886}
-  tileContainer: {fileID: 1880256885}
-  teamContainer: {fileID: 1165807471}
-  gameManager: {fileID: 793274057}
-  inputCanvas: {fileID: 786892816}
-  fail: 0
-  teamNumber: 1
-  UnitCount: 0
-  isTurn: 0
-  prepMove: 0
-  prepAttack: 0
-  ArcherPrefabs: {fileID: 2447492087481229808, guid: 922b5c386f1a9484cb185eb31861ce9b,
-    type: 3}
-  CavPrefab: {fileID: 3820589919303551468, guid: ebd2b95adc99bfc4b8d5b52481ac6338,
-    type: 3}
-  SpearPrefab: {fileID: 9057450584704020432, guid: 186bb05af6b001c4d8132148ddd1ae3a,
-    type: 3}
-  SwordPrefab: {fileID: 3471639141552289292, guid: 1054c56ed2c052947a0267968b4dd570,
-    type: 3}
-  unitPositions:
-  - x: 0
-    y: 1
-  - x: 0
-    y: 3
-  - x: 0
-    y: 4
-  - x: 0
-    y: 6
-  - x: 2
-    y: 2
-  - x: 2
-    y: 5
-  - x: 4
-    y: 1
-  - x: 4
-    y: 3
-  - x: 4
-    y: 4
-  - x: 4
-    y: 6
-  - x: 5
-    y: 2
-  - x: 5
-    y: 3
-  - x: 5
-    y: 4
-  - x: 5
-    y: 5
-  unitTypes: 0000000000000000000000000000000001000000010000000300000003000000030000000300000002000000020000000200000002000000
 --- !u!1 &1212148553
 GameObject:
   m_ObjectHideFlags: 0
@@ -2251,6 +2145,114 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1433780125}
   m_CullTransparentMesh: 1
+--- !u!1 &1438095774
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1438095776}
+  - component: {fileID: 1438095777}
+  - component: {fileID: 1438095775}
+  m_Layer: 0
+  m_Name: Team 1
+  m_TagString: TeamManager1
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1438095775
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1438095774}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3300b7736c888244184116a3ef41dd69, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  team: 1
+  units: []
+--- !u!4 &1438095776
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1438095774}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 11.008881, y: -39.708393, z: -19.184143}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 571922595}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1438095777
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1438095774}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a3f67160faca044c9d19db6cb62a332, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tileManager: {fileID: 1880256886}
+  tileContainer: {fileID: 1880256885}
+  teamContainer: {fileID: 1438095775}
+  gameManager: {fileID: 793274057}
+  inputCanvas: {fileID: 786892816}
+  fail: 0
+  teamNumber: 1
+  UnitCount: 0
+  isTurn: 0
+  prepMove: 0
+  prepAttack: 0
+  ArcherPrefabs: {fileID: 2447492087481229808, guid: 922b5c386f1a9484cb185eb31861ce9b,
+    type: 3}
+  CavPrefab: {fileID: 3820589919303551468, guid: ebd2b95adc99bfc4b8d5b52481ac6338,
+    type: 3}
+  SpearPrefab: {fileID: 9057450584704020432, guid: 186bb05af6b001c4d8132148ddd1ae3a,
+    type: 3}
+  SwordPrefab: {fileID: 3471639141552289292, guid: 1054c56ed2c052947a0267968b4dd570,
+    type: 3}
+  unitPositions:
+  - x: 0
+    y: 1
+  - x: 0
+    y: 3
+  - x: 0
+    y: 4
+  - x: 0
+    y: 6
+  - x: 2
+    y: 2
+  - x: 2
+    y: 5
+  - x: 4
+    y: 1
+  - x: 4
+    y: 3
+  - x: 4
+    y: 4
+  - x: 4
+    y: 6
+  - x: 5
+    y: 2
+  - x: 5
+    y: 3
+  - x: 5
+    y: 4
+  - x: 5
+    y: 5
+  unitTypes: 0000000000000000000000000000000001000000010000000300000003000000030000000300000002000000020000000200000002000000
 --- !u!1 &1467697143
 GameObject:
   m_ObjectHideFlags: 0
@@ -2333,7 +2335,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1165807472}
+      - m_Target: {fileID: 1438095777}
         m_TargetAssemblyTypeName: TeamManager, Assembly-CSharp
         m_MethodName: attack
         m_Mode: 1

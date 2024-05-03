@@ -8,46 +8,30 @@ public class UnitContainer : MonoBehaviour
 {
     #region FIELDS
 
+    //this is the class that stors all the units for a team
     public int team;
+
+    //list of units
     public List<Unit> units = new List<Unit>();
 
     #endregion FIELDS
 
-    #region UNITY METHODS
-
-    private void Start()
-    {
-        /*GameObject[] unit = new GameObject[1000];
-        int count = 0;
-        for (int i = 0; i <= 1000; i++)
-        {
-            GameObject item = GameObject.Find($"Unit ({i})");
-            if (item)
-            {
-                unit[count] = item;
-                count++;
-            }
-            else
-            {
-                break;
-            }
-        }
-        System.Array.Resize(ref unit, count);
-        foreach (GameObject item in unit)
-        {
-            units.Add(item.GetComponent<Unit>());
-        }*/
-    }
-
-    #endregion UNITY METHODS
-
     #region METHODS
 
+    //gets the total value of all the units in the team - this is the sum of all the indevidual units values
+    public float GetUnitValues()
+    {
+        float totalValue = 0;
+        foreach (var unit in units)
+        {
+            totalValue += unit.GetUnitValue();
+        }
+        return totalValue;
+    }
+
+    //adds a unit to the team
     public void AddUnit(Unit unit, int2 TilePos)
     {
-        //unit.unitProperties.team = team;
-        //unit.Move(TilePos);
-        //Debug.Log("unit moved, adding to list");
         units.Add(unit);
         units[units.Count - 1].team = team;
     }

@@ -63,20 +63,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   unitType: 0
+  UnitBaseValue: 10
   health: 0
   maxHealth: 50
-  attack: 25
+  attack: 35
   defense: 5
   attackRange: 5
-  movementRange: 1
+  movementRange: 2
   team: 0
   Pos:
     x: 0
     y: 0
   OnDied:
-    m_PersistentCalls:
-      m_Calls: []
-  OnUnitHealthChanged:
     m_PersistentCalls:
       m_Calls: []
 --- !u!1001 &3977706387787889557

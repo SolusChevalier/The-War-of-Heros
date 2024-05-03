@@ -63,9 +63,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   unitType: 1
+  UnitBaseValue: 20
   health: 0
   maxHealth: 75
-  attack: 30
+  attack: 35
   defense: 15
   attackRange: 2
   movementRange: 3

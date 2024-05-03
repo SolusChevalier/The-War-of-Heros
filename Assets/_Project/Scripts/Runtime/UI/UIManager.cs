@@ -8,16 +8,19 @@ using UnityEngine.UIElements;
 
 public class UIManager : MonoBehaviour
 {
+    //simple ui manager
     public GameObject redCan, blueCan;
+
     public TeamManager RedTeam, BlueTeam;
     public TextMeshProUGUI RedTeamText, BlueTeamText;
+    public float redScore, blueScore;
 
     public void Start()
     {
         RedTeamText.color = Color.red;
         BlueTeamText.color = Color.cyan;
-        BlueTeamText.text = "Blue Team\nUnits: " + BlueTeam.UnitCount;
-        RedTeamText.text = "Red Team\nUnits: " + RedTeam.UnitCount;
+        BlueTeamText.text = "Blue Team\nScore: " + BlueTeam.GetTeamValue() + "\nUnits: " + BlueTeam.UnitCount;
+        RedTeamText.text = "Red Team\nScore: " + RedTeam.GetTeamValue() + "\nUnits: " + RedTeam.UnitCount;
     }
 
     private void Update()
@@ -32,7 +35,7 @@ public class UIManager : MonoBehaviour
             redCan.SetActive(false);
             blueCan.SetActive(true);
         }
-        BlueTeamText.text = "Blue Team\nUnits: " + BlueTeam.UnitCount;
-        RedTeamText.text = "Red Team\nUnits: " + RedTeam.UnitCount;
+        BlueTeamText.text = "Blue Team\nScore: " + BlueTeam.GetTeamValue() + "\nUnits: " + BlueTeam.UnitCount;
+        RedTeamText.text = "Red Team\nScore: " + RedTeam.GetTeamValue() + "\nUnits: " + RedTeam.UnitCount;
     }
 }

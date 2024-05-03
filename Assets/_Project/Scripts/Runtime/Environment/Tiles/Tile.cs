@@ -8,10 +8,13 @@ public class Tile : MonoBehaviour
     private Vector3 _progression;
     private readonly Vector3 _speedIncrement = Vector3.one;
     private Vector3 _motionEquation;
-    private Vector3 _HoverAnchorLow, _HoverTarget, _HoverAnchorHigh;
+    private Vector3 _HoverAnchorLow, _HoverTarget, _HoverAnchorHigh, _HoverOverPos;
     public bool selectable = false;
+    public SelectionState selectionState = SelectionState.Inert;
+    public HoverState hoverState = HoverState.Static;
+    private bool _Home = true;
 
-    private void Start()
+    private void Start()//starting properties
     {
         properties = new TileProperties();
         Transform placementPoint = transform.GetChild(1).transform;
@@ -19,15 +22,19 @@ public class Tile : MonoBehaviour
         _motionEquation = new Vector3(Mathf.Floor(Random.Range(0, 3)), Mathf.Floor(Random.Range(0, 3)), Mathf.Floor(Random.Range(0, 3)));
         _HoverAnchorLow = properties.StartPos + new Vector3(0, 0.2f, 0);
         _HoverAnchorHigh = properties.StartPos + new Vector3(0, 0.4f, 0);
+        _HoverOverPos = properties.StartPos + new Vector3(0, 0.3f, 0);
         _HoverTarget = _HoverAnchorLow;
+        selectionState = SelectionState.Inert;
+        hoverState = HoverState.Static;
     }
 
     private void Update()
     {
         _progression += Time.deltaTime * _speedIncrement;
+        //Movement();
     }
 
-    public void Hover()
+    public void Hover()//starts the tile hover
     {
         if (!properties.canHover)
             return;
@@ -35,7 +42,7 @@ public class Tile : MonoBehaviour
         StartCoroutine(HoverCo());
     }
 
-    public void flipHoverHeight()
+    public void flipHoverHeight()//flips the hover height
     {
         properties.highLow = !properties.highLow;
 
@@ -45,7 +52,7 @@ public class Tile : MonoBehaviour
             HoverLow();
     }
 
-    public void HoverLow()
+    public void HoverLow()//tile hovers low when selectable
     {
         if (!properties.canHover)
             return;
@@ -53,7 +60,7 @@ public class Tile : MonoBehaviour
         //selectable = false;
     }
 
-    public void HoverHigh()
+    public void HoverHigh()//tile hovers high when selected
     {
         if (!properties.canHover)
             return;
@@ -61,7 +68,7 @@ public class Tile : MonoBehaviour
         //selectable = true;
     }
 
-    public void StopHover()
+    public void StopHover()//stops the hover
     {
         properties.hover = false;
         //HoverLow();
@@ -71,10 +78,11 @@ public class Tile : MonoBehaviour
         HoverLow();
     }
 
-    public IEnumerator HoverCo()
+    public IEnumerator HoverCo()//tile hover state, will be implemented later
     {
         while (properties.hover && properties.canHover)
         {
+            //lerp to hover target - which bobs slightly
             transform.position = Vector3.Lerp(transform.position, new Vector3(
                     _HoverTarget.x, _HoverTarget.y + TrigMotionEquations((int)_motionEquation.y, _progression.y, 0.15f, 0.05f), _HoverTarget.z), Time.deltaTime * 5f);
             /*transform.position = Vector3.Lerp(transform.position, new Vector3(
@@ -88,13 +96,89 @@ public class Tile : MonoBehaviour
         }
     }
 
-    public void Select()
+    public void SetSelectionSate(SelectionState state)//tile selection state will be implemented later
     {
-        //_selected = true;
-        flipHoverHeight();
-        //selectable = true;
+        if (state == SelectionState.Inert)
+        {
+            selectionState = SelectionState.Inert;
+            hoverState = HoverState.Static;
+        }
+        if (state == SelectionState.NotSelectable)
+        {
+            selectionState = SelectionState.NotSelectable;
+            hoverState = HoverState.Locked;
+        }
+        if (state == SelectionState.Selectable)
+        {
+            selectionState = SelectionState.Selectable;
+            hoverState = HoverState.Low;
+        }
+        if (state == SelectionState.Selected)
+        {
+            selectionState = SelectionState.Selected;
+            hoverState = HoverState.High;
+        }
     }
 
+    public void Movement()//tile hover state, will be implemented later
+    {
+        if (hoverState == HoverState.Locked | hoverState == HoverState.Static)
+        {
+            if (_Home)
+                return;
+            transform.position = Vector3.Lerp(transform.position, properties.StartPos, Time.deltaTime * 5f);
+            _Home = true;
+            return;
+        }
+        if (hoverState == HoverState.HoverOver)
+        {
+            if (_Home)
+                _Home = false;
+            transform.position = Vector3.Lerp(transform.position, new Vector3(
+                _HoverOverPos.x, _HoverOverPos.y + TrigMotionEquations((int)_motionEquation.y, _progression.y, 0.15f, 0.05f), _HoverOverPos.z),
+                Time.deltaTime * 5f);
+        }
+        if (hoverState == HoverState.Low)
+        {
+            if (_Home)
+                _Home = false;
+            transform.position = Vector3.Lerp(transform.position, new Vector3(
+                _HoverAnchorLow.x, _HoverAnchorLow.y + TrigMotionEquations((int)_motionEquation.y, _progression.y, 0.15f, 0.05f), _HoverAnchorLow.z),
+                Time.deltaTime * 5f);
+        }
+        if (hoverState == HoverState.High)
+        {
+            if (_Home)
+                _Home = false;
+            transform.position = Vector3.Lerp(transform.position, new Vector3(
+                _HoverAnchorHigh.x, _HoverAnchorHigh.y + TrigMotionEquations((int)_motionEquation.y, _progression.y, 0.15f, 0.05f), _HoverAnchorHigh.z),
+                Time.deltaTime * 5f);
+        }
+    }
+
+    public void Select()//sellects tile
+    {
+        /*if (selectionState == SelectionState.NotSelectable | selectionState == SelectionState.Inert)
+            return;
+        if (selectionState == SelectionState.Selected)
+        {
+            SetSelectionSate(SelectionState.Selectable);
+            return;
+        }
+        if (selectionState == SelectionState.Selectable)
+        {
+            SetSelectionSate(SelectionState.Selected);
+            return;
+        }*/
+        properties.highLow = !properties.highLow;//flips the hover height
+
+        if (properties.highLow)
+            HoverHigh();
+        else
+            HoverLow();
+    }
+
+    //trig motion equations - they are random equations and are used to create a bobbing effect
     private float TrigMotionEquations(int equation, float progression, float frequency, float amplitude)
     {
         float result = 0f;

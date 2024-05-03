@@ -9,7 +9,11 @@ public class UnitProperties : MonoBehaviour
 {
     #region FIELDS
 
+    //this is the class that stors all the units properties
+    //we can use this later in the project
     public UnitTypes unitType;
+
+    public int UnitBaseValue;
     public int health;
     public int maxHealth = 100;
     public int attack;
@@ -19,7 +23,6 @@ public class UnitProperties : MonoBehaviour
     public int team;
     public int2 Pos;
     public UnityEvent OnDied;
-    public UnityEvent<int> OnUnitHealthChanged;
 
     #endregion FIELDS
 
@@ -37,14 +40,12 @@ public class UnitProperties : MonoBehaviour
     public void onStart()
     {
         health = maxHealth;
-        OnUnitHealthChanged?.Invoke(health);
     }
 
-    public void TakeDamage(int damage)
+    public void TakeDamage(int damage)//deals damage to the unit
     {
         health -= damage;
         health = Mathf.Clamp(health, 0, maxHealth);  // Ensure health stays within bounds
-        OnUnitHealthChanged?.Invoke(health);
         if (health <= 0)
         {
             health = 0;
@@ -52,9 +53,9 @@ public class UnitProperties : MonoBehaviour
         }
     }
 
-    private void Die()
+    private void Die()//handles the death of the unit
     {
-        OnDied?.Invoke();
+        OnDied?.Invoke();//invoke the death event
     }
 
     #endregion METHODS

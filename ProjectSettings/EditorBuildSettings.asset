@@ -16,11 +16,11 @@ EditorBuildSettings:
     guid: d6b38d15731013f489407bb57b29b0ab
   - enabled: 1
     path: Assets/Scenes/Game Scenes/Red2Blue1.unity
-    guid: 1dcd732aac4e1434f8d32a09c611d871
-  - enabled: 1
-    path: Assets/Scenes/BlueWin.unity
-    guid: 0df496e551e199c4bbef95fee6c47816
+    guid: 62ec4cb5fca96914da803b31a84ea1cd
   - enabled: 1
     path: Assets/Scenes/RedWin.unity
     guid: 13519a063003bcd47ba3f5c98a308727
+  - enabled: 1
+    path: Assets/Scenes/BlueWin.unity
+    guid: 0df496e551e199c4bbef95fee6c47816
   m_configObjects: {}

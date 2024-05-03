@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using Unity.Mathematics;
 using UnityEngine;
@@ -18,6 +19,7 @@ public class TeamManager : MonoBehaviour
     public bool fail = false;
     public int teamNumber;
     public int UnitCount = 1;
+    private int _totalUnitCount = 14;
     public bool isTurn = false;
     public bool prepMove = false;
     public bool prepAttack = false;
@@ -31,7 +33,8 @@ public class TeamManager : MonoBehaviour
 
     private void Start()
     {
-        UnitCount = 14;
+        UnitCount = unitTypes.Length;
+        //_totalUnitCount = UnitCount;
     }
 
     private void Awake()
@@ -44,9 +47,9 @@ public class TeamManager : MonoBehaviour
     {
         if (UnitCount <= 0)
         {
-            EventManager.PlayerWin?.Invoke(teamNumber);
+            EventManager.PlayerWin?.Invoke(teamNumber);//death check
         }
-        if (!isTurn) return;
+        if (!isTurn) return;//only starts turn if it is their turn
         StartTurn();
     }
 
@@ -54,27 +57,16 @@ public class TeamManager : MonoBehaviour
 
     #region METHODS
 
-    public IEnumerator UnitLoad(float time)
+    public IEnumerator UnitLoad(float time)// loads unit with a small delay to prevent null reference from large loads at the start by other classes
     {
         yield return new WaitForSeconds(time);
-        LoadUnits();
-        //UnitCount = team.units.Count;
-    }
-
-    public IEnumerator wait(float time)
-    {
-        yield return new WaitForSeconds(time);
-    }
-
-    public void LoadUnits()
-    {
         for (int i = 0; i < unitPositions.Length; i++)
         {
             instantiateUnit(unitPositions[i], unitTypes[i]);
         }
     }
 
-    public void instantiateUnit(int2 pos, UnitTypes unitType)
+    public void instantiateUnit(int2 pos, UnitTypes unitType)//instantiates a unit - in a pos and of a type - will allow us to automatically load units latter
     {
         GameObject unit = null;
         Unit tmpUnit = null;
@@ -97,50 +89,75 @@ public class TeamManager : MonoBehaviour
                 unit = Instantiate(SwordPrefab, placementPoint.position, placementPoint.rotation);
                 break;
         }
+        //sets the instantiated unit to the correct team and position
         tmpUnit = unit.GetComponent<Unit>();
-        /*        unit.GetComponent<Unit>().tileManager = tileManager;
-                unit.GetComponent<Unit>().teamManager = this;
-                unit.GetComponent<Unit>().team = unit.GetComponent<Unit>().unitProperties.team = teamNumber;
-                unit.GetComponent<Unit>().team = unit.GetComponent<Unit>().team = teamNumber;*/
         tmpUnit.tileManager = tileManager;
         tmpUnit.teamManager = this;
         tmpUnit.team = tmpUnit.unitProperties.team = teamNumber;
-
+        //adds the unit to the team container
         teamContainer.AddUnit(tmpUnit, pos);
 
         tileContainer.PosTileDict[pos].selectable = true;
         bool comp = false;
-        tmpUnit.Move(pos, out comp);
+        tmpUnit.Move(pos, out comp);//moves the unit to the correct position
     }
 
-    public void StartTurn()
+    //gets the total value of the team
+    //this is used to determine the value of the team in relation to the other team
+    //we take the total value of the units in the unit container and multiply it by
+    //the quotient of how many units the the team has left and the total number of units
+    public float GetTeamValue()
+    {
+        float totalValue = teamContainer.GetUnitValues();
+
+        if (totalValue <= 0)
+        {
+            return 0;
+        }
+        float teamValue = ((float)UnitCount / (float)_totalUnitCount);
+        totalValue = (float)totalValue * (float)teamValue;
+        totalValue = (float)(Math.Round(((double)totalValue), 2));
+
+        return totalValue;
+    }
+
+    public void StartTurn()//starts the turn
     {
         if (tileManager.selectedTile == null) return;
-
+        //checks if there is a sellected tile
         if (tileManager.selectedTile.properties.Occupied == false) return;
-
+        //checks if the selected tile is occupied
         if (tileManager.selectedTile.properties.OccupyingUnit.team != teamNumber) return;
+        //checks if the unit on the selected tile is on the team
+
+        //if there is a tile selected, it is occupied, and the unit is on the team we procede
+
         inputCanvas.SetActive(true);
-        if (Input.GetKeyDown(KeyCode.Keypad1))
+        if (Input.GetKeyDown(KeyCode.Keypad1) | Input.GetButtonDown("Move"))//Move
         {
             movement();
         }
-        if (Input.GetKeyDown(KeyCode.Keypad2))
+        if (Input.GetKeyDown(KeyCode.Keypad2) | Input.GetButtonDown("Attack"))//Attack
         {
             attack();
         }
+
         if (tileManager.TargetTile == null) return;
-        if (tileManager.TargetTile != null & prepAttack)//TakeAction - Attack
+        //checks if there is a target tile
+
+        if (prepAttack)//TakeAction - Attack
         {
             int damage;
             bool complete = false;
-            try
+            try//try catch to prevent null reference
             {
                 damage = tileManager.selectedTile.properties.OccupyingUnit.unitProperties.attack - tileManager.TargetTile.properties.OccupyingUnit.unitProperties.defense;
+                //damage calculation
                 complete = false;
                 tileManager.TargetTile.properties.OccupyingUnit.TakeDamage(damage, out complete);
+                //damage taken
             }
-            catch (NullReferenceException)
+            catch (NullReferenceException)//catches null reference - resets turn
             {
                 tileManager.resetTiles();
                 prepMove = false;
@@ -149,29 +166,33 @@ public class TeamManager : MonoBehaviour
                 return;
             }
 
-            if (complete)
+            if (complete)//checks if the attack is complete
             {
+                //if the attack is complete we reset the tiles and end the turn
                 tileManager.resetTiles();
                 isTurn = false;
                 prepMove = false;
                 prepAttack = false;
                 inputCanvas.SetActive(false);
+                EventManager.NextTurn?.Invoke();
             }
             else
             {
+                //if the attack is not complete we reset the tiles and end the turn
                 tileManager.resetTiles();
                 prepMove = false;
                 prepAttack = false;
             }
         }
-        if (tileManager.TargetTile != null & prepMove)//TakeAction - Move
+        if (prepMove)//TakeAction - Move
         {
             bool complete = false;
-            try
+            try//try catch to prevent null reference
             {
+                //moves the unit to the target tile
                 tileManager.selectedTile.properties.OccupyingUnit.Move(tileContainer.KeyByValue(tileManager.TargetTile), out complete);
             }
-            catch (NullReferenceException)
+            catch (NullReferenceException)//catches null reference - resets turn
             {
                 tileManager.resetTiles();
                 prepMove = false;
@@ -179,16 +200,19 @@ public class TeamManager : MonoBehaviour
                 return;
             }
 
-            if (complete)
+            if (complete)//checks if the move is complete
             {
+                //if the move is complete we reset the tiles and end the turn
                 tileManager.resetTiles();
                 isTurn = false;
                 prepMove = false;
                 inputCanvas.SetActive(false);
                 prepAttack = false;
+                EventManager.NextTurn?.Invoke();
             }
             else
             {
+                //if the move is not complete we reset the tiles and end the turn
                 tileManager.resetTiles();
                 prepMove = false;
                 prepAttack = false;
@@ -196,53 +220,50 @@ public class TeamManager : MonoBehaviour
         }
     }
 
-    private void MoveUnit()
-    {
-        bool complete = false;
-        tileManager.selectedTile.properties.OccupyingUnit.Move(tileContainer.KeyByValue(tileManager.TargetTile), out complete);
-    }
-
+    //method to move unit
     public void movement()
     {
-        prepMove = true;
+        if (tileManager.selectedTile == null)//checks if you have a unit selected
+            return;
+        prepMove = true;//sets the move and attack bools
         prepAttack = false;
-        foreach (Tile tile in tileContainer.tiles)
+        foreach (Tile tile in tileContainer.tiles)//sets all tiles to not selectable to reset them for the range check
         {
             tile.selectable = false;
         }
-        tileManager.PopTilesInRad(tileContainer.KeyByValue(tileManager.selectedTile), tileManager.selectedTile.properties.OccupyingUnit.unitProperties.movementRange, teamNumber, true);
+        //checks range of movement - pops up the tiles that are in range and are not occupied
+        tileManager.PopTilesInRad(tileContainer.KeyByValue(tileManager.selectedTile), tileManager.selectedTile.properties.OccupyingUnit.unitProperties.movementRange, true);
     }
 
+    //method to attack unit
     public void attack()
     {
-        prepMove = false;
+        if (tileManager.selectedTile == null)//checks if you have a unit selected
+            return;
+        prepMove = false;//sets the move and attack bools
         prepAttack = true;
         foreach (Tile tile in tileContainer.tiles)
         {
-            tile.selectable = false;
-            tile.properties.canHover = true;
+            tile.selectable = false;//sets all tiles to not selectable to reset them for the range check
         }
-        tileManager.PopTilesInRad(tileContainer.KeyByValue(tileManager.selectedTile), tileManager.selectedTile.properties.OccupyingUnit.unitProperties.attackRange, teamNumber, false);
+        //checks range of attack - pops up the tiles that are in range and are occupied by an enemy unit
+        tileManager.PopTilesInRad(tileContainer.KeyByValue(tileManager.selectedTile), tileManager.selectedTile.properties.OccupyingUnit.unitProperties.attackRange, false);
     }
 
     public void SetUnitLock(bool lockState)
     {
-        int2[] tmpPosList = new int2[teamContainer.units.Count];
         for (int i = 0; i < teamContainer.units.Count; i++)
         {
-            tmpPosList[i] = teamContainer.units[i].unitProperties.Pos;
+            tileContainer.PosTileDict[teamContainer.units[i].unitProperties.Pos].properties.canHover = lockState;
         }
-        tileContainer.SetTileLock(tmpPosList, lockState);
     }
 
     public void SetTileSelectable(bool Selectable)
     {
-        int2[] tmpPosList = new int2[teamContainer.units.Count];
         for (int i = 0; i < teamContainer.units.Count; i++)
         {
-            tmpPosList[i] = teamContainer.units[i].unitProperties.Pos;
+            tileContainer.PosTileDict[teamContainer.units[i].unitProperties.Pos].selectable = Selectable;
         }
-        tileContainer.SetTileSelectable(tmpPosList, Selectable);
     }
 
     public void stopTeamHover()
@@ -255,22 +276,18 @@ public class TeamManager : MonoBehaviour
 
     public void setTileHover(bool hoverState)
     {
-        int2[] tmpPosList = new int2[teamContainer.units.Count];
         for (int i = 0; i < teamContainer.units.Count; i++)
         {
-            tmpPosList[i] = teamContainer.units[i].unitProperties.Pos;
+            tileContainer.PosTileDict[teamContainer.units[i].unitProperties.Pos].properties.hover = hoverState;
         }
-        tileContainer.SetTileHover(tmpPosList, hoverState);
     }
 
     public void setCanHover(bool hover)
     {
-        int2[] tmpPosList = new int2[teamContainer.units.Count];
         for (int i = 0; i < teamContainer.units.Count; i++)
         {
-            tmpPosList[i] = teamContainer.units[i].unitProperties.Pos;
+            tileContainer.PosTileDict[teamContainer.units[i].unitProperties.Pos].properties.canHover = hover;
         }
-        tileContainer.setCanHover(tmpPosList, hover);
     }
 
     #endregion METHODS

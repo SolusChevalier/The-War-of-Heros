@@ -12,10 +12,12 @@ public class TileContainer : MonoBehaviour
     // this is where we will generate the map but for now it just stores the tiles in a manually ordered list
     public List<Tile> tiles = new List<Tile>();
 
+    // this is a dictionary that will allow us to access the tiles by their position
     public Dictionary<int2, Tile> PosTileDict = new Dictionary<int2, Tile>();
 
     private void Start()
     {
+        //loads the tiles into the dictionary
         int count = 0;
         for (int Y = 0; Y <= 7; Y++)
         {
@@ -36,6 +38,7 @@ public class TileContainer : MonoBehaviour
         */
     }
 
+    // this function will return the tile at the given position
     public int2 KeyByValue(Tile value)
     {
         foreach (KeyValuePair<int2, Tile> entry in PosTileDict)
@@ -48,48 +51,11 @@ public class TileContainer : MonoBehaviour
         return new int2(-1, -1);
     }
 
-    public Tile ValueByKey(int2 key)
-    {
-        return PosTileDict[key];
-    }
-
-    public void SetTileLock(int2[] tiles, bool lockState)
-    {
-        foreach (int2 tile in tiles)
-        {
-            PosTileDict[tile].properties.canHover = lockState;
-        }
-    }
-
     public void ResetTileSelectable()
     {
         foreach (Tile tile in tiles)
         {
             tile.selectable = false;
-        }
-    }
-
-    public void SetTileSelectable(int2[] tiles, bool SelectableState)
-    {
-        foreach (int2 tile in tiles)
-        {
-            PosTileDict[tile].selectable = SelectableState;
-        }
-    }
-
-    public void SetTileHover(int2[] tiles, bool HoverState)
-    {
-        foreach (int2 tile in tiles)
-        {
-            PosTileDict[tile].properties.hover = HoverState;
-        }
-    }
-
-    public void setCanHover(int2[] tiles, bool hov)
-    {
-        foreach (int2 tile in tiles)
-        {
-            PosTileDict[tile].properties.canHover = hov;
         }
     }
 
