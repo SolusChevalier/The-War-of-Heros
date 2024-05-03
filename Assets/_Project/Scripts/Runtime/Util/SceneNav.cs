@@ -40,6 +40,7 @@ public class SceneNav : MonoBehaviour
     public void ExitApp()
     {
         Application.Quit();
+        //UnityEditor.EditorApplication.ExitPlaymode();
     }
 
     #endregion UNITY METHODS
