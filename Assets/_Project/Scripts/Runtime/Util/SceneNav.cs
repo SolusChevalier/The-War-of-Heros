@@ -18,9 +18,28 @@ public class SceneNav : MonoBehaviour
 
     #region UNITY METHODS
 
+    public void StartRandom()
+    {
+        var random = new System.Random();
+        var scene = random.Next(1, 100);
+        if (scene % 2 == 0)
+        {
+            LoadScene(Scenes.Red1Blue2.ToString());
+        }
+        else
+        {
+            LoadScene(Scenes.Red2Blue1.ToString());
+        }
+    }
+
     public void LoadScene(string sceneName)
     {
         SceneManager.LoadScene(sceneName);
+    }
+
+    public void ExitApp()
+    {
+        Application.Quit();
     }
 
     #endregion UNITY METHODS

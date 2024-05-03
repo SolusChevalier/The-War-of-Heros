@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using static SceneNav;
 
 public class PauseMenu : MonoBehaviour
 {
@@ -57,8 +58,16 @@ public class PauseMenu : MonoBehaviour
     public void Retry()
     {
         Time.timeScale = 1f;
-        Cursor.visible = false;
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        var random = new System.Random();
+        var scene = random.Next(1, 100);
+        if (scene % 2 == 0)
+        {
+            SceneManager.LoadScene(Scenes.Red1Blue2.ToString());
+        }
+        else
+        {
+            SceneManager.LoadScene(Scenes.Red2Blue1.ToString());
+        }
     }
 
     public void QuitGame()

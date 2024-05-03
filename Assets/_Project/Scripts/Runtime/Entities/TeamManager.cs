@@ -145,7 +145,7 @@ public class TeamManager : MonoBehaviour
         if (tileManager.TargetTile == null) return;
         //checks if there is a target tile
 
-        if (prepAttack)//TakeAction - Attack
+        if (tileManager.TargetTile != null & prepAttack)//TakeAction - Attack
         {
             int damage;
             bool complete = false;
@@ -184,7 +184,7 @@ public class TeamManager : MonoBehaviour
                 prepAttack = false;
             }
         }
-        if (prepMove)//TakeAction - Move
+        if (tileManager.TargetTile != null & prepMove)//TakeAction - Move
         {
             bool complete = false;
             try//try catch to prevent null reference
