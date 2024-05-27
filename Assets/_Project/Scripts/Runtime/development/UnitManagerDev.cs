@@ -1,20 +1,18 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using TMPro;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class TeamManager : MonoBehaviour
+public class UnitManagerDev : MonoBehaviour
 {
     #region FIELDS
 
-    public TileManager tileManager;
-    public TileContainer tileContainer;
-    public UnitContainer teamContainer;
-    public GameManager gameManager;
+    public TileManagerDev tileManager;
+    public TileContainerDev tileContainer;
+    public UnitContainerDev teamContainer;
+    public GameMaster gameManager;
     public GameObject inputCanvas;
     public bool fail = false;
     public int teamNumber;
@@ -70,8 +68,9 @@ public class TeamManager : MonoBehaviour
     public void instantiateUnit(int2 pos, UnitTypes unitType)//instantiates a unit - in a pos and of a type - will allow us to automatically load units latter
     {
         GameObject unit = null;
-        Unit tmpUnit = null;
-        Transform placementPoint = tileManager.GetTile(pos).properties.PlacementPoint;
+        UnitDev tmpUnit = null;
+        TileDev tileDev = tileManager.GetTile(pos);
+        Transform placementPoint = tileDev.properties.PlacementPoint;
         switch (unitType)
         {
             case UnitTypes.Archer:
@@ -91,14 +90,14 @@ public class TeamManager : MonoBehaviour
                 break;
         }
         //sets the instantiated unit to the correct team and position
-        tmpUnit = unit.GetComponent<Unit>();
+        tmpUnit = unit.GetComponent<UnitDev>();
         tmpUnit.tileManager = tileManager;
         tmpUnit.teamManager = this;
         tmpUnit.team = tmpUnit.unitProperties.team = teamNumber;
         //adds the unit to the team container
         teamContainer.AddUnit(tmpUnit, pos);
 
-        tileContainer.PosTileDict[pos].selectable = true;
+        tileDev.SetSelectionSate(SelectionState.Selectable);
         bool comp = false;
         tmpUnit.Move(pos, out comp);//moves the unit to the correct position
     }
@@ -124,11 +123,11 @@ public class TeamManager : MonoBehaviour
 
     public void StartTurn()//starts the turn
     {
-        if (tileManager.selectedTile == null) return;
+        //if (tileManager.selectedTile == null) return;
         //checks if there is a sellected tile
-        if (tileManager.selectedTile.properties.Occupied == false) return;
+        //if (tileManager.selectedTile.properties.Occupied == false) return;
         //checks if the selected tile is occupied
-        if (tileManager.selectedTile.properties.OccupyingUnit.team != teamNumber) return;
+        //if (tileManager.selectedTile.properties.OccupyingUnit.team != teamNumber) return;
         //checks if the unit on the selected tile is on the team
 
         //if there is a tile selected, it is occupied, and the unit is on the team we procede
@@ -148,14 +147,14 @@ public class TeamManager : MonoBehaviour
 
         if (tileManager.TargetTile != null & prepAttack)//TakeAction - Attack
         {
-            int damage;
+            //int damage;
             bool complete = false;
             try//try catch to prevent null reference
             {
-                damage = tileManager.selectedTile.properties.OccupyingUnit.unitProperties.attack - tileManager.TargetTile.properties.OccupyingUnit.unitProperties.defense;
+                //damage = tileManager.selectedTile.properties.OccupyingUnit.unitProperties.attack - tileManager.TargetTile.properties.OccupyingUnit.unitProperties.defense;
                 //damage calculation
                 complete = false;
-                tileManager.TargetTile.properties.OccupyingUnit.TakeDamage(damage, out complete);
+                //tileManager.TargetTile.properties.OccupyingUnit.TakeDamage(damage, out complete);
                 //damage taken
             }
             catch (NullReferenceException)//catches null reference - resets turn
@@ -191,7 +190,7 @@ public class TeamManager : MonoBehaviour
             try//try catch to prevent null reference
             {
                 //moves the unit to the target tile
-                tileManager.selectedTile.properties.OccupyingUnit.Move(tileContainer.KeyByValue(tileManager.TargetTile), out complete);
+                //tileManager.selectedTile.properties.OccupyingUnit.Move(tileContainer.KeyByValue(tileManager.TargetTile), out complete);
             }
             catch (NullReferenceException)//catches null reference - resets turn
             {
@@ -224,38 +223,38 @@ public class TeamManager : MonoBehaviour
     //method to move unit
     public void movement()
     {
-        if (tileManager.selectedTile == null)//checks if you have a unit selected
-            return;
+        //if (tileManager.selectedTile == null)//checks if you have a unit selected
+        //return;
         prepMove = true;//sets the move and attack bools
         prepAttack = false;
-        foreach (Tile tile in tileContainer.tiles)//sets all tiles to not selectable to reset them for the range check
+        /*foreach (Tile tile in tileContainer.tiles)//sets all tiles to not selectable to reset them for the range check
         {
             tile.selectable = false;
-        }
+        }*/
         //checks range of movement - pops up the tiles that are in range and are not occupied
-        tileManager.PopTilesInRad(tileContainer.KeyByValue(tileManager.selectedTile), tileManager.selectedTile.properties.OccupyingUnit.unitProperties.movementRange, true);
+        //tileManager.PopTilesInRad(tileContainer.KeyByValue(tileManager.selectedTile), tileManager.selectedTile.properties.OccupyingUnit.unitProperties.movementRange, true);
     }
 
     //method to attack unit
     public void attack()
     {
-        if (tileManager.selectedTile == null)//checks if you have a unit selected
-            return;
+        /*if (tileManager.selectedTile == null)//checks if you have a unit selected
+            return;*/
         prepMove = false;//sets the move and attack bools
         prepAttack = true;
-        foreach (Tile tile in tileContainer.tiles)
+        /*foreach (Tile tile in tileContainer.tiles)
         {
             tile.selectable = false;//sets all tiles to not selectable to reset them for the range check
-        }
+        }*/
         //checks range of attack - pops up the tiles that are in range and are occupied by an enemy unit
-        tileManager.PopTilesInRad(tileContainer.KeyByValue(tileManager.selectedTile), tileManager.selectedTile.properties.OccupyingUnit.unitProperties.attackRange, false);
+        //tileManager.PopTilesInRad(tileContainer.KeyByValue(tileManager.selectedTile), tileManager.selectedTile.properties.OccupyingUnit.unitProperties.attackRange, false);
     }
 
     public void SetUnitLock(bool lockState)
     {
         for (int i = 0; i < teamContainer.units.Count; i++)
         {
-            tileContainer.PosTileDict[teamContainer.units[i].unitProperties.Pos].properties.canHover = lockState;
+            //tileContainer.PosTileDict[teamContainer.units[i].unitProperties.Pos].properties.canHover = lockState;
         }
     }
 
@@ -263,23 +262,23 @@ public class TeamManager : MonoBehaviour
     {
         for (int i = 0; i < teamContainer.units.Count; i++)
         {
-            tileContainer.PosTileDict[teamContainer.units[i].unitProperties.Pos].selectable = Selectable;
+            //tileContainer.PosTileDict[teamContainer.units[i].unitProperties.Pos].selectable = Selectable;
         }
     }
 
     public void stopTeamHover()
     {
-        foreach (Tile tile in tileManager.tileContainer.tiles)
+        /*foreach (Tile tile in tileManager.tileContainer.tiles)
         {
             tile.StopHover();
-        }
+        }*/
     }
 
     public void setTileHover(bool hoverState)
     {
         for (int i = 0; i < teamContainer.units.Count; i++)
         {
-            tileContainer.PosTileDict[teamContainer.units[i].unitProperties.Pos].properties.hover = hoverState;
+            //tileContainer.PosTileDict[teamContainer.units[i].unitProperties.Pos].properties.hover = hoverState;
         }
     }
 
@@ -287,7 +286,7 @@ public class TeamManager : MonoBehaviour
     {
         for (int i = 0; i < teamContainer.units.Count; i++)
         {
-            tileContainer.PosTileDict[teamContainer.units[i].unitProperties.Pos].properties.canHover = hover;
+            //tileContainer.PosTileDict[teamContainer.units[i].unitProperties.Pos].properties.canHover = hover;
         }
     }
 
