@@ -49,7 +49,7 @@ public class Unit : MonoBehaviour
 
     public void TakeDamage(int dam, out bool complete)//deals damage to the unit
     {
-        Debug.Log("Unit taking damage : " + dam);
+        //Debug.Log("Unit taking damage : " + dam);
         complete = true;
         StartCoroutine(MaterialChange());
         unitProperties.TakeDamage(dam);

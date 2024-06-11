@@ -92,8 +92,8 @@ public class Node
 
         List<int2> moves = promisingNode.ChosenUnit.tileManager.GetSelectableTilesForMove(promisingNode.ChosenUnit.unitProperties.Pos, promisingNode.ChosenUnit.unitProperties.attackRange);
         List<int2> attacks = promisingNode.ChosenUnit.tileManager.GetSelectableTilesForAttack(promisingNode.ChosenUnit.unitProperties.Pos, promisingNode.ChosenUnit.unitProperties.attackRange);
-        Debug.Log(moves.Count);
-        Debug.Log(attacks.Count);
+        //Debug.Log(moves.Count);
+        //Debug.Log(attacks.Count);
         int action = UnityEngine.Random.Range(1, 100);
         if (action < 30 & moves.Count > 0)
         {

@@ -244,7 +244,7 @@ public class TeamManager : MonoBehaviour
         if (turn.ChosenAction == 1)
         {
             //movement();
-            Debug.Log("Move");
+            //Debug.Log("Move");
             prepMove = true;//sets the move and attack bools
             prepAttack = false;
             tileManager.PopTilesInRad(turn.moveAction, turn.ChosenUnit.unitProperties.movementRange, true);
@@ -261,7 +261,7 @@ public class TeamManager : MonoBehaviour
         if (turn.ChosenAction == 2)
         {
             //attack();
-            Debug.Log("Attack");
+            //Debug.Log("Attack");
             prepMove = false;//sets the move and attack bools
             prepAttack = true;
             tileManager.PopTilesInRad(turn.AttackAction, turn.ChosenUnit.unitProperties.attackRange, false);
