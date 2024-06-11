@@ -26,7 +26,7 @@ RenderSettings:
   m_AmbientIntensity: 1
   m_AmbientMode: 0
   m_SubtractiveShadowColor: {r: 0.24741901, g: 0.21217516, b: 0.3018868, a: 1}
-  m_SkyboxMaterial: {fileID: 10304, guid: 0000000000000000f000000000000000, type: 0}
+  m_SkyboxMaterial: {fileID: 2100000, guid: 21c937679babbe342bbe268f756df09d, type: 2}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
@@ -660,8 +660,8 @@ MonoBehaviour:
   TeamTurn: 1
   Team1: {fileID: 1438095777}
   Team2: {fileID: 1058352771}
-  Win1: BlueWin
-  Win2: RedWin
+  Win1: AILose
+  Win2: AIWin
   gameStateRep: {fileID: 793274058}
   unitContainer1: {fileID: 1438095775}
   unitContainer2: {fileID: 1058352770}

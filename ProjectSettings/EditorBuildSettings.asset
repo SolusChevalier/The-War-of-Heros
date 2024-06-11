@@ -26,6 +26,12 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Game Scenes/AIBattle.unity
     guid: f80c5c5e169ecbe4cbc2b19beb22c3b2
+  - enabled: 1
+    path: Assets/Scenes/AIWin.unity
+    guid: 2fc01dd4769a7ae46bf69f2d28645523
+  - enabled: 1
+    path: Assets/Scenes/AILose.unity
+    guid: a53c2ce1d3068024e89faf7d93cd27fb
   m_configObjects:
     com.unity.input.settings: {fileID: 11400000, guid: ded98bc169d93004ab60fc5fcfd0cb92,
       type: 2}

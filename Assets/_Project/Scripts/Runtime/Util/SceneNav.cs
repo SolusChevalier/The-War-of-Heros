@@ -19,6 +19,8 @@ public class SceneNav : MonoBehaviour
         AIBattle,
         RedWin,
         BlueWin,
+        AIWin,
+        AILose
     }
 
     public enum UICanvas
