@@ -142,6 +142,72 @@ public class TileManager : MonoBehaviour
         }
     }
 
+    public List<int2> GetSelectableTilesForMove(int2 PiecePos, int rad)
+    {
+        List<int2> selectableTiles = new List<int2>((rad * 2 + 1) * (rad * 2 + 1));
+        for (int i = -rad; i <= rad; i++)
+        {
+            for (int j = -rad; j <= rad; j++)
+            {
+                int2 newPos = new int2(PiecePos.x + i, PiecePos.y + j);
+                if (tileContainer.PosTileDict.ContainsKey(newPos))
+                {
+                    if (!tileContainer.PosTileDict[newPos].properties.Occupied)
+                    {
+                        selectableTiles.Add(newPos);
+                    }
+                }
+            }
+        }
+        return selectableTiles;
+    }
+
+    public List<int2> GetSelectableTilesForAttack(int2 PiecePos, int rad)
+    {
+        List<int2> selectableTiles = new List<int2>((rad * 2 + 1) * (rad * 2 + 1));
+        for (int i = -rad; i <= rad; i++)
+        {
+            for (int j = -rad; j <= rad; j++)
+            {
+                int2 newPos = new int2(PiecePos.x + i, PiecePos.y + j);
+                if (tileContainer.PosTileDict.ContainsKey(newPos))
+                {
+                    if (tileContainer.PosTileDict[newPos].properties.Occupied) // & tileContainer.PosTileDict[newPos].properties.OccupyingUnit.team != team
+                    {
+                        if (tileContainer.PosTileDict[newPos].properties.OccupyingUnit.team != 2)
+                        {
+                            selectableTiles.Add(newPos);
+                        }
+                    }
+                }
+            }
+        }
+        return selectableTiles;
+    }
+
+    public int GetNumUnitsInRange(int2 PiecePos, int rad, int teamNum)
+    {
+        int numUnits = 0;
+        for (int i = -rad; i <= rad; i++)
+        {
+            for (int j = -rad; j <= rad; j++)
+            {
+                int2 newPos = new int2(PiecePos.x + i, PiecePos.y + j);
+                if (tileContainer.PosTileDict.ContainsKey(newPos))
+                {
+                    if (tileContainer.PosTileDict[newPos].properties.Occupied) // & tileContainer.PosTileDict[newPos].properties.OccupyingUnit.team != team
+                    {
+                        if (tileContainer.PosTileDict[newPos].properties.OccupyingUnit.team != teamNum)
+                        {
+                            numUnits++;
+                        }
+                    }
+                }
+            }
+        }
+        return numUnits;
+    }
+
     public IEnumerator WaitReset(float time)
     {
         yield return new WaitForSeconds(time);

@@ -19,9 +19,9 @@ public class TileContainer : MonoBehaviour
     {
         //loads the tiles into the dictionary
         int count = 0;
-        for (int Y = 0; Y <= 7; Y++)
+        for (int Y = 0; Y <= 15; Y++)
         {
-            for (int X = 0; X <= 15; X++)
+            for (int X = 0; X <= 31; X++)
             {
                 PosTileDict.Add(new int2(X, Y), tiles[count]);
                 count++;

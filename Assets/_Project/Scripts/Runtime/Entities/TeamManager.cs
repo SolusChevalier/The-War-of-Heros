@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using TMPro;
 using Unity.Mathematics;
 using UnityEngine;
@@ -26,6 +27,10 @@ public class TeamManager : MonoBehaviour
     public GameObject ArcherPrefabs, CavPrefab, SpearPrefab, SwordPrefab;
     public int2[] unitPositions;
     public UnitTypes[] unitTypes;
+    public bool isAI = false;
+
+    //private bool aiturn = true;
+    private Node turn;
 
     #endregion FIELDS
 
@@ -50,7 +55,14 @@ public class TeamManager : MonoBehaviour
             EventManager.PlayerWin?.Invoke(teamNumber);//death check
         }
         if (!isTurn) return;//only starts turn if it is their turn
-        StartTurn();
+        if (!isAI)
+        {
+            StartTurn();
+        }
+        else
+        {
+            StartTurnAI();
+        }
     }
 
     #endregion UNITY METHODS
@@ -100,7 +112,7 @@ public class TeamManager : MonoBehaviour
 
         tileContainer.PosTileDict[pos].selectable = true;
         bool comp = false;
-        tmpUnit.Move(pos, out comp);//moves the unit to the correct position
+        tmpUnit.InitMove(pos, out comp);//moves the unit to the correct position
     }
 
     //gets the total value of the team
@@ -218,6 +230,53 @@ public class TeamManager : MonoBehaviour
                 prepMove = false;
                 prepAttack = false;
             }
+        }
+    }
+
+    public void StartTurnAI()
+    {
+        turn = Node.TheFullMonte(gameManager.gameStateRep.GetGameState());
+        if (turn == null)
+        {
+            Debug.Log("Turn is null");
+            return;
+        }
+        if (turn.ChosenAction == 1)
+        {
+            //movement();
+            Debug.Log("Move");
+            prepMove = true;//sets the move and attack bools
+            prepAttack = false;
+            tileManager.PopTilesInRad(turn.moveAction, turn.ChosenUnit.unitProperties.movementRange, true);
+            tileContainer.PosTileDict[turn.ChosenUnit.unitProperties.Pos].properties.OccupyingUnit.Move(turn.moveAction, out bool fail);
+            //turn.ChosenUnit.Move(turn.moveAction, out bool fail);
+            tileManager.resetTiles();
+            isTurn = false;
+            prepMove = false;
+            inputCanvas.SetActive(false);
+            prepAttack = false;
+            //aiturn = true;
+            EventManager.NextTurn?.Invoke();
+        }
+        if (turn.ChosenAction == 2)
+        {
+            //attack();
+            Debug.Log("Attack");
+            prepMove = false;//sets the move and attack bools
+            prepAttack = true;
+            tileManager.PopTilesInRad(turn.AttackAction, turn.ChosenUnit.unitProperties.attackRange, false);
+            //Debug.Log(tileContainer.PosTileDict[turn.AttackAction].properties.OccupyingUnit == null);
+            Debug.Log(turn.ChosenUnit.unitProperties.attack);
+            Debug.Log(tileContainer.PosTileDict[turn.AttackAction].properties.OccupyingUnit.unitProperties.defense);
+
+            tileContainer.PosTileDict[turn.AttackAction].properties.OccupyingUnit.TakeDamage(turn.ChosenUnit.unitProperties.attack - tileContainer.PosTileDict[turn.AttackAction].properties.OccupyingUnit.unitProperties.defense, out bool fail);
+            tileManager.resetTiles();
+            isTurn = false;
+            prepMove = false;
+            inputCanvas.SetActive(false);
+            prepAttack = false;
+            //aiturn = true;
+            EventManager.NextTurn?.Invoke();
         }
     }
 

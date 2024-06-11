@@ -50,6 +50,8 @@ MonoBehaviour:
   tileManager: {fileID: 0}
   teamManager: {fileID: 0}
   team: 0
+  meshRenderer: {fileID: 0}
+  Colours: []
 --- !u!114 &1201069741204145331
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -59,17 +61,17 @@ MonoBehaviour:
   m_GameObject: {fileID: 3820589919303551468}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3c97bfed0ab61ef4ca839d9c124d7092, type: 3}
+  m_Script: {fileID: 11500000, guid: a04223c1973f6ff4fbc35d910f407b52, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   unitType: 1
-  UnitBaseValue: 20
+  UnitBaseValue: 60
   health: 0
-  maxHealth: 75
+  maxHealth: 80
   attack: 35
-  defense: 15
-  attackRange: 2
-  movementRange: 3
+  defense: 5
+  attackRange: 4
+  movementRange: 5
   team: 0
   Pos:
     x: 0

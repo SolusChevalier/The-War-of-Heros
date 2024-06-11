@@ -759,6 +759,7 @@ GameObject:
   m_Component:
   - component: {fileID: 793274056}
   - component: {fileID: 793274057}
+  - component: {fileID: 793274058}
   m_Layer: 0
   m_Name: GM
   m_TagString: Untagged
@@ -798,10 +799,29 @@ MonoBehaviour:
   Team2: {fileID: 1058352771}
   Win1: BlueWin
   Win2: RedWin
+  gameStateRep: {fileID: 793274058}
   unitContainer1: {fileID: 1438095775}
   unitContainer2: {fileID: 1058352770}
   tileManager: {fileID: 1880256886}
   tileContainer: {fileID: 1880256885}
+  gameOver: 0
+--- !u!114 &793274058
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 793274055}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 70b6739f8bed5d540a5928cead8b2124, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Player1Units: []
+  Player2Units: []
+  Player1Value: 0
+  Player2Value: 0
+  GameOver: 0
 --- !u!1 &916814769
 GameObject:
   m_ObjectHideFlags: 0
@@ -1199,35 +1219,36 @@ MonoBehaviour:
   SwordPrefab: {fileID: 3471639141552289292, guid: 1054c56ed2c052947a0267968b4dd570,
     type: 3}
   unitPositions:
-  - x: 15
+  - x: 31
     y: 1
-  - x: 15
-    y: 3
-  - x: 15
-    y: 4
-  - x: 15
+  - x: 31
     y: 6
-  - x: 13
-    y: 2
-  - x: 13
+  - x: 31
+    y: 9
+  - x: 31
+    y: 14
+  - x: 29
     y: 5
-  - x: 11
+  - x: 29
+    y: 10
+  - x: 27
     y: 1
-  - x: 11
-    y: 3
-  - x: 11
-    y: 4
-  - x: 11
+  - x: 27
     y: 6
-  - x: 10
+  - x: 27
+    y: 9
+  - x: 27
+    y: 14
+  - x: 26
     y: 2
-  - x: 10
-    y: 3
-  - x: 10
-    y: 4
-  - x: 10
+  - x: 26
     y: 5
+  - x: 26
+    y: 10
+  - x: 26
+    y: 13
   unitTypes: 0000000000000000000000000000000001000000010000000300000003000000030000000300000002000000020000000200000002000000
+  isAI: 0
 --- !u!1 &1074488977
 GameObject:
   m_ObjectHideFlags: 0
@@ -1957,32 +1978,33 @@ MonoBehaviour:
   - x: 0
     y: 1
   - x: 0
-    y: 3
-  - x: 0
-    y: 4
-  - x: 0
     y: 6
-  - x: 2
-    y: 2
+  - x: 0
+    y: 9
+  - x: 0
+    y: 14
   - x: 2
     y: 5
+  - x: 2
+    y: 10
   - x: 4
     y: 1
   - x: 4
-    y: 3
-  - x: 4
-    y: 4
-  - x: 4
     y: 6
+  - x: 4
+    y: 9
+  - x: 4
+    y: 14
   - x: 5
     y: 2
   - x: 5
-    y: 3
-  - x: 5
-    y: 4
-  - x: 5
     y: 5
+  - x: 5
+    y: 10
+  - x: 5
+    y: 13
   unitTypes: 0000000000000000000000000000000001000000010000000300000003000000030000000300000002000000020000000200000002000000
+  isAI: 0
 --- !u!1 &1467697143
 GameObject:
   m_ObjectHideFlags: 0

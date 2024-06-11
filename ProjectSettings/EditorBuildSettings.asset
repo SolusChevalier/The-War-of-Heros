@@ -23,4 +23,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/BlueWin.unity
     guid: 0df496e551e199c4bbef95fee6c47816
-  m_configObjects: {}
+  - enabled: 1
+    path: Assets/Scenes/Game Scenes/AIBattle.unity
+    guid: f80c5c5e169ecbe4cbc2b19beb22c3b2
+  m_configObjects:
+    com.unity.input.settings: {fileID: 11400000, guid: ded98bc169d93004ab60fc5fcfd0cb92,
+      type: 2}

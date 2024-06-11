@@ -11,15 +11,17 @@ public class GameManager : MonoBehaviour
     public TeamManager Team1, Team2;
 
     public string Win1, Win2;
-
+    public GameStateRep gameStateRep;
     public UnitContainer unitContainer1, unitContainer2;
     public TileManager tileManager;
     public TileContainer tileContainer;
+    public bool gameOver = false;
 
     private void Start()//subscribes to events
     {
         EventManager.NextTurn += NextTurn;
         EventManager.PlayerWin += PlayerWin;
+        gameStateRep = GetComponent<GameStateRep>();
     }
 
     private void OnDestroy()//kills events on destroy
@@ -71,6 +73,7 @@ public class GameManager : MonoBehaviour
     //function that is called by a team manager to pass on to the next turn
     public void NextTurn()
     {
+        gameStateRep.UpdateGameState(unitContainer1.units, unitContainer2.units, gameOver);
         if (TeamTurn == 1)
             Player1Turn();
         else if (TeamTurn == 2)
@@ -81,9 +84,15 @@ public class GameManager : MonoBehaviour
     public void PlayerWin(int team)
     {
         if (team == 1)
+        {
+            gameOver = true;
             SceneManager.LoadScene(Win1);
+        }
         if (team == 2)
+        {
+            gameOver = true;
             SceneManager.LoadScene(Win2);
+        }
     }
 
     //function that sets the turn to player 1
